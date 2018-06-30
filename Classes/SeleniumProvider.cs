@@ -11,7 +11,7 @@ namespace FB_Data_Analysis.Classes {
             var options = new ChromeOptions();
             options.AddArgument("--disable-notifications");
             _driver = new ChromeDriver(System.IO.Directory.GetCurrentDirectory(), options);
-            _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
+            _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(3);
             return _driver;
         }
     }

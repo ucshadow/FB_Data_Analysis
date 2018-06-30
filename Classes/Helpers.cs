@@ -29,7 +29,10 @@ namespace FB_Data_Analysis.Classes {
             var cName = className.Split('\\').Last().Split('.').First();
             
             ForegroundColor = ConsoleColor.White;
-            WriteLine($"[ {cName}: {methodName} ]  ->  {message}");
+
+            var spaced = CalculateDistance($"[ {cName}: {methodName} ]");
+            
+            WriteLine($"{spaced}  ->  {message}");
         }
 
         public static void Print(string message, ConsoleColor textColor,
@@ -39,7 +42,11 @@ namespace FB_Data_Analysis.Classes {
             var cName = className.Split('\\').Last().Split('.').First();
             
             ForegroundColor = textColor;
-            WriteLine($"[ {cName}: {methodName} ]  ->  {message}");
+            
+            var spaced = CalculateDistance($"[ {cName}: {methodName} ]");
+            
+            WriteLine($"{spaced}  ->  {message}");
+            
             ForegroundColor = ConsoleColor.White;
         }
 
@@ -47,6 +54,13 @@ namespace FB_Data_Analysis.Classes {
             var all = element.FindElements(by);
             //Print($"Found elements for {by} {all.Count}");
             return all.Count > 0;
+        }
+
+        private static string CalculateDistance(string s) {
+            for (var i = s.Length; i < 40; i++) {
+                s += " ";
+            }
+            return s;
         }
     }
 }

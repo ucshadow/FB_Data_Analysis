@@ -18,6 +18,8 @@ namespace FB_Data_Analysis.Classes {
         private List<string> _visited;
         private readonly ChromeDriver _driver;
 
+        private List<User> _users;
+
         private string _fileName;
 
         //private string _mainTab;
@@ -31,7 +33,8 @@ namespace FB_Data_Analysis.Classes {
             _groupUrl = groupUrl;
             _userCount = userCount;
             _visited = new List<string>();
-
+            _users = new List<User>();
+            
             AddFileToVisitedSet();
 
             _loginUrl = "https://www.facebook.com";
@@ -44,11 +47,20 @@ namespace FB_Data_Analysis.Classes {
         }
 
         public void MainLoop() {
+            Print("Main loop started");
+            Print("");
             GetGroupPage();
             //ScrollToLoadAllData();
             //OpenUserInNewTab();
             //GetAboutTab();
-            new About();
+            
+            // toDo: this should be in a loop
+
+            var u = new User();
+            
+            var about = new About(u);
+            Print("\n ---- \n");
+            u.PrintUser();
         }
 
         private void GetAboutTab() {
@@ -116,7 +128,7 @@ namespace FB_Data_Analysis.Classes {
         private void ScrollToLoadAllData() {
             for (var i = 0; i < _userCount / 15 + 1; i++) {
                 _driver.ExecuteScript("scrollBy(0, 2000)");
-                Helpers.Wait(2000, 1000);
+                Wait(2000, 1000);
             }
 
             _allProfiles = _driver.FindElementsByClassName("uiProfileBlockContent");
@@ -134,7 +146,7 @@ namespace FB_Data_Analysis.Classes {
         private void AddFileToVisitedSet() {
             var dir = Directory.GetCurrentDirectory();
 
-            _fileName = new string(_groupUrl.Where(char.IsDigit).ToArray());
+            _fileName = new string(_groupUrl.Where(char.IsDigit).ToArray()) + ".dt";
 
             if (!File.Exists(dir + "/" + _fileName)) {
                 Print($"Path is: {dir + "/" + _fileName}");

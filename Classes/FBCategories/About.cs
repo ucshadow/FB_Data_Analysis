@@ -7,33 +7,39 @@ using static FB_Data_Analysis.Classes.Helpers;
 namespace FB_Data_Analysis.Classes.FBCategories {
     public class About {
         private readonly ChromeDriver _driver;
+        private User _user;
+        private string _tabClass = "_4qm1";
 
-        public About() {
+        public About(User user) {
+            _user = user;
             _driver = SeleniumProvider.Driver;
             
+            // to be removed later
             
             Scrap();
         }
 
         private void Scrap() {
-            GetOverview();
             GetWorkAndEducation();
         }
 
-        /// <summary>
-        /// Scraps the Overview tab, focused by default
-        /// </summary>
-        private void GetOverview() {
+        private void GetPlacesLived() {
             
+            // male
+            if (ElementIsPresent(_driver, By.XPath("//*[@title='Places He's Lived']"))) {
+                _driver.FindElementByXPath("//*[@title='Places He's Lived']").Click();
+            }
+            else { // female
+                _driver.FindElementByXPath("//*[@title='Places She's Lived']").Click();
+            }
+            var allFields = _driver.FindElementsByClassName(_tabClass);
         }
 
         private void GetWorkAndEducation() {
-            var button = _driver.FindElementByXPath("//*[@title='Work and Education']");
-            button.Click();
-            //Helpers.Wait(_driver, 10000, 5000);
+            _driver.FindElementByXPath("//*[@title='Work and Education']").Click();
 
             // all fields in the work and education tab.
-            var allFields = _driver.FindElementsByClassName("_4qm1");
+            var allFields = _driver.FindElementsByClassName(_tabClass);
             foreach (var webElement in allFields) {
                 //var title = webElement.FindElement(By.XPath("//a[@role = 'heading']")).Text.ToLower();
                 
@@ -56,8 +62,6 @@ namespace FB_Data_Analysis.Classes.FBCategories {
                         break;
                 }
             }
-            Wait(50000, 10000);
-            _driver.Close();
         }
 
         private void GetWork(ISearchContext container) {
@@ -66,41 +70,64 @@ namespace FB_Data_Analysis.Classes.FBCategories {
             
             var fields = container.FindElements(By.ClassName("_2tdc"));
             foreach (var webElement in fields) {
-                var jobUrl = GetJobUrl(webElement);
-                var jobTitle = GetJobTitle(webElement);
+                var elementUrl = GetElementUrl(webElement);
+                var elementTitle = GetElementTitle(webElement);
                 
-                Print($"Found job {jobUrl?.Text} working as {jobTitle?.Text}", ConsoleColor.Cyan);
+                Print($"Found job {elementUrl?.Text} working as {elementTitle?.Text}", ConsoleColor.Cyan);
+                
+                _user.WorkAndEducation.Work.Add(elementUrl?.Text, elementTitle?.Text);
             }
         }
 
         private void GetEducation(IWebElement container) {
+            Print("Getting education...", ConsoleColor.DarkBlue);
             
+            var fields = container.FindElements(By.ClassName("_2tdc"));
+            foreach (var webElement in fields) {
+                var elementUrl = GetElementUrl(webElement);
+                var elementTitle = GetElementTitle(webElement);
+                
+                Print($"Found education {elementUrl?.Text} in {elementTitle?.Text}", ConsoleColor.Cyan);
+                
+                _user.WorkAndEducation.Education.Add(elementUrl?.Text, elementTitle?.Text);
+            }
         }
 
         private void GetSkills(IWebElement container) {
             
+            Print("Getting skills...", ConsoleColor.DarkBlue);
+            
+            var fields = container.FindElement(By.ClassName("fbProfileEditExperiences")).
+                FindElements(By.CssSelector("a"));
+            foreach (var webElement in fields) {
+                var elementUrl = webElement;
+                
+                Print($"Found skill {elementUrl?.Text}", ConsoleColor.Cyan);
+                
+                _user.WorkAndEducation.Skills.Add(elementUrl?.Text);
+            }
         }
 
         private void NewTitleFound(string title) {
             Print($"new title found: {title} for {_driver.Url}");
         }
 
-        private IWebElement GetJobUrl(ISearchContext webElement) {
+        private IWebElement GetElementUrl(ISearchContext webElement) {
 
             if (ElementIsPresent(webElement, By.ClassName("_2lzr"))) {
                 return webElement.FindElement(By.ClassName("_2lzr"))
                     .FindElement(By.CssSelector("a"));
             }
-            Print($"{webElement} has no job url");
+            Print($"{webElement} has no url", ConsoleColor.DarkRed);
             return null;
         }
         
-        private IWebElement GetJobTitle(ISearchContext webElement) {
+        private IWebElement GetElementTitle(ISearchContext webElement) {
 
             if (ElementIsPresent(webElement, By.ClassName("fsm"))) {
                 return webElement.FindElement(By.ClassName("fsm"));
             }
-            Print($"{webElement} has no job title.");
+            Print($"{webElement} has no title.", ConsoleColor.DarkRed);
             return null;
         }
     }
