@@ -58,7 +58,7 @@ namespace FB_Data_Analysis.Classes {
 
             var u = new User();
             
-            var about = new About(u);
+            var about = new ProfileAbout(u);
             Print("\n ---- \n");
             u.PrintUser();
         }
