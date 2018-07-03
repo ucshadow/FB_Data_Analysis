@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using static FB_Data_Analysis.Classes.Helpers;
@@ -18,16 +19,23 @@ namespace FB_Data_Analysis.Classes.FBCategories {
         public ProfileAbout(User user) {
             _user = user;
             _driver = SeleniumProvider.Driver;
-            
-            // to be removed later
-            _driver.Url =
-                "https://www.facebook.com/zuck/about?lst=100014603262262%3A4%3A1530524941&section=contact-info";
                 
             Scrap();
         }
 
         private void Scrap() {
+            
+            if (!TabIsPresent("About")) return;
+
+            ScrollToBottom();
+
+            //_driver.ExecuteScript("scrollBy(0,-document.body.scrollHeight)");
+
+            ScrollToElement("pagelet_timeline_medley_about");
+            
             var tabList = _driver.FindElementsByClassName("_47_-");
+
+
             GetSpecificOverviewTab(1, tabList, "Work and Education");
             GetSpecificOverviewTab(2, tabList, "Places Lived");
             GetSpecificOverviewTab(3, tabList, "Contact And Basic Info");

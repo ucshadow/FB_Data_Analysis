@@ -18,6 +18,8 @@ namespace FB_Data_Analysis.Classes {
         private List<string> _visited;
         private readonly ChromeDriver _driver;
 
+        private string _singleUser;
+
         private List<User> _users;
 
         private string _fileName;
@@ -25,6 +27,8 @@ namespace FB_Data_Analysis.Classes {
         //private string _mainTab;
         private int _visitedProfiles;
         private ReadOnlyCollection<IWebElement> _allProfiles;
+
+        private Navigator _nav;
 
         public Spider(string email, string password, string groupUrl,
             int userCount) {
@@ -41,24 +45,38 @@ namespace FB_Data_Analysis.Classes {
             _driver = SeleniumProvider.Driver;
             //_mainTab = _driver.CurrentWindowHandle;
             _allProfiles = new ReadOnlyCollection<IWebElement>(new List<IWebElement>());
-
+            
+            // toDo: ??
+            //_nav = new Navigator(new User());
 
             //var x = _driver.FindElementsByClassName("uiProfileBlockContent");
         }
 
+        // ToDo: check if each panel is Present!! 
         public void MainLoop() {
+
+            _singleUser = "https://www.facebook.com/zuck/about";
+            
             Print("Main loop started");
             Print("");
             GetGroupPage();
-            //ScrollToLoadAllData();
+            
+            ScrollToBottom();
             //OpenUserInNewTab();
             //GetAboutTab();
             
             // toDo: this should be in a loop
 
             var u = new User();
+            _nav = new Navigator(u);
             
+            // get about, everyone has this tab
             var about = new ProfileAbout(u);
+            
+            _nav.GetTabs();
+            
+            //var checkIns = new ProfileCheckIns(u);
+            
             Print("\n ---- \n");
             u.PrintUser();
         }
@@ -121,6 +139,9 @@ namespace FB_Data_Analysis.Classes {
             _driver.FindElementById("email").SendKeys(_email);
             _driver.FindElementById("pass").SendKeys(_password);
             _driver.FindElementById("loginbutton").Click();
+
+            _driver.Url = _singleUser;
+
             //Helpers.Wait(_driver, 2000, 1000);
             //_driver.Url = _groupUrl;
         }

@@ -70,7 +70,8 @@ namespace FB_Data_Analysis.Classes.UserFields {
                 .Invoke(this[dictionaryName], new object[] {key, value});
         }
 
-        public void PrintUser() {
+        public void PrintAbout() {
+            Console.WriteLine();
             foreach (var kvp in _allFields) {
                 Print($"{kvp.Key}: ", ConsoleColor.Red);
                 Console.WriteLine("");
