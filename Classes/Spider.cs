@@ -55,7 +55,10 @@ namespace FB_Data_Analysis.Classes {
         // ToDo: check if each panel is Present!! 
         public void MainLoop() {
 
-            _singleUser = "https://www.facebook.com/zuck/about";
+            _singleUser =
+                "https://www.facebook.com/victoria.sotropa.9/about";
+                //"https://www.facebook.com/veronika.dumnean/about";
+                //"https://www.facebook.com/ana.pruteanu.39/about";
             
             Print("Main loop started");
             Print("");
@@ -71,9 +74,9 @@ namespace FB_Data_Analysis.Classes {
             _nav = new Navigator(u);
             
             // get about, everyone has this tab
-            var about = new ProfileAbout(u);
+            //var about = new ProfileAbout(u);
             
-            _nav.GetTabs();
+            _nav.Perform();
             
             //var checkIns = new ProfileCheckIns(u);
             

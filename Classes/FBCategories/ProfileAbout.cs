@@ -148,17 +148,17 @@ namespace FB_Data_Analysis.Classes.FBCategories {
 
             var allRows = element.FindElements(By.ClassName("_ikh"));
 
-            ScrapLifeEvents(allRows, pascalAttributeName);
+            ScrapLifeEvents(allRows, pascalAttributeName, pascalCategoryName);
         }
         
-        private void ScrapLifeEvents(IReadOnlyList<IWebElement> allRows, string pascalAttributeName) {
+        private void ScrapLifeEvents(IReadOnlyList<IWebElement> allRows, string pascalAttributeName, string pascalCategoryName) {
             for (var index = 0; index < allRows.Count; index++) {
                 var year = allRows[index].FindElement(By.ClassName("_50f8"));
                 var webElement = allRows[index];
                 var value = ExtractTextValueFromElement(webElement, true);
 
                 Print($"Found key {pascalAttributeName} and value {value}", ConsoleColor.DarkCyan);
-                _user.About.AddData(pascalAttributeName, $"{index}_{pascalAttributeName}", $"{year.Text}: {value}");
+                _user.About.AddData(pascalAttributeName, $"{index}_{pascalCategoryName}", $"{year.Text}: {value}");
             }
         }
         
@@ -170,16 +170,18 @@ namespace FB_Data_Analysis.Classes.FBCategories {
 
             var allRows = element.FindElements(By.ClassName("_4bl9"));
 
-            ScrapFamAndDet(allRows, pascalAttributeName);
+            if (pascalAttributeName.Contains("About")) pascalAttributeName = "AboutPerson";
+            
+            ScrapFamAndDet(allRows, pascalAttributeName, pascalCategoryName);
         }
 
-        private void ScrapFamAndDet(IReadOnlyList<IWebElement> allRows, string pascalAttributeName) {
+        private void ScrapFamAndDet(IReadOnlyList<IWebElement> allRows, string pascalAttributeName, string pascalCategoryName) {
             for (var index = 0; index < allRows.Count; index++) {
                 var webElement = allRows[index];
                 var value = ExtractTextValueFromElement(webElement, true);
 
                 Print($"Found key {pascalAttributeName} and value {value}", ConsoleColor.DarkCyan);
-                _user.About.AddData(pascalAttributeName, $"{index}_{pascalAttributeName}", value);
+                _user.About.AddData(pascalAttributeName, $"{index}_{pascalCategoryName}", value);
             }
         }
 
@@ -237,7 +239,7 @@ namespace FB_Data_Analysis.Classes.FBCategories {
                     _user.About.AddData(pascalAttributeName, $"{index}_" + elementUrlTitle?.Text, elementSubtitle?.Text);
                 }
                 else {
-                    _user.About.AddData(pascalAttributeName, $"{index}_" + pascalAttributeName, elementUrlTitle?.Text);
+                    _user.About.AddData(pascalAttributeName, $"{index}_" + pascalCategoryName, elementUrlTitle?.Text);
                 }
             }
             

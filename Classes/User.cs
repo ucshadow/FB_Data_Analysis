@@ -8,17 +8,17 @@ namespace FB_Data_Analysis.Classes {
     public class User {
 
         public AboutClass About { get; set; }
-        public CheckInsClass Checkins { get; set; }
+        public MiscClass Misc { get; set; }
 
         public User() {
             About = new AboutClass();
-            Checkins = new CheckInsClass();
+            Misc = new MiscClass();
             
         }
 
         public void PrintUser() {
             About.PrintAbout();
-            Checkins.PrintCheckIns();
+            Misc.PrintMisc();
         }
         
         

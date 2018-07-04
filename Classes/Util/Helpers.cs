@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using OpenQA.Selenium;
@@ -141,6 +142,14 @@ namespace FB_Data_Analysis.Classes {
             Wait(1000, 500);
         }
 
+        public static void ScrollToCheckIns() {
+            var body = SeleniumProvider.Driver.FindElement(By.CssSelector("body"));
+            for (var i = 0; i < 2; i++) {
+                body.SendKeys(Keys.PageDown);
+                Wait(1000, 500);
+            }
+        }
+
         public static void ScrollToBottom() {
 
             var driver = SeleniumProvider.Driver;
@@ -150,7 +159,7 @@ namespace FB_Data_Analysis.Classes {
             
             while (true) {
                 body.SendKeys(Keys.PageDown);
-                Wait(2000, 500);
+                Wait(2500, 500);
                 var q = driver.ExecuteScript("return document.body.scrollHeight + ''");
 
                 int.TryParse((string) q, out var a);
@@ -214,6 +223,44 @@ namespace FB_Data_Analysis.Classes {
 
         public static void CloseTab() {
             SeleniumProvider.Driver.Close();
+        }
+
+        public static ReadOnlyCollection<IWebElement> GetTabButtons(string tabId) {
+            Wait(1000, 500);
+            var b = SeleniumProvider.Driver.FindElementById(tabId);
+            var butts = b.FindElements(By.ClassName("_3sz"));
+            //var butts = SeleniumProvider.Driver.FindElementsByClassName("_3sz");
+            Print($"Found by xpath {butts.Count}");
+            return butts;
+        }
+
+        /// <summary>
+        /// Clicks either check-ins or the first with a See all button
+        /// </summary>
+        public static void ClickFirstButton() {
+            var cats = new[] {
+                "map", "sports", "music", "movies", "tv", "books", "likes", "reviews",
+                "groups"
+            };
+
+            var allPresent = SeleniumProvider.Driver.FindElements(By
+                .XPath("//div[contains(@id, 'pagelet_timeline_medley')]"));
+            
+            foreach (var webElement in allPresent) {
+                var actualId = webElement.GetAttribute("id");
+                
+                // if the current web element has a cat in it's id
+                if (!cats.Any(e => actualId.Contains(e))) continue;
+                // check if it has a See All button
+                var but = SeleniumProvider.Driver
+                    .FindElementsByXPath("//div[@id='pagelet_timeline_medley_movies']//span[@class='_3t5 fwb']");
+                if (but.Count <= 0) continue;
+                Print($"Clicking on button for tab with id {actualId}", ConsoleColor.Cyan);
+                but[0].Click();
+                return;
+            }
+            Print("No more cats", ConsoleColor.Magenta);
+            
         }
     }
 }
