@@ -8,6 +8,7 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using static System.Console;
+using static System.Diagnostics.Stopwatch;
 
 namespace FB_Data_Analysis.Classes {
     public static class Helpers {
@@ -52,12 +53,15 @@ namespace FB_Data_Analysis.Classes {
         }
 
         public static bool ElementIsPresent(ISearchContext element, By by) {
+            var watch = StartNew();
             var all = element.FindElements(by);
-            //Print($"Found elements for {by} {all.Count}");
+            watch.Stop();
+            Print($"Done in {watch.ElapsedMilliseconds / 1000} seconds");
             return all.Count > 0;
         }
 
         public static string ExtractTextValueFromElement(ISearchContext element, bool scrapDivs) {
+            var watch = StartNew();
             var res = new List<string>();
             var allSpans = element.FindElements(By.CssSelector("span"));
             var allDivs = element.FindElements(By.CssSelector("div"));
@@ -84,6 +88,8 @@ namespace FB_Data_Analysis.Classes {
                 }
             }
 
+            watch.Stop();
+            Print($"Done in {watch.ElapsedMilliseconds / 1000} seconds");
             return string.Join(" | ", res);
         }
 
@@ -142,6 +148,11 @@ namespace FB_Data_Analysis.Classes {
             Wait(1000, 500);
         }
 
+        public static void ScrollUpSome() {
+            SeleniumProvider.Driver.ExecuteScript("scrollBy(0, -1000)");
+            Wait(500, 100);
+        }
+
         public static void ScrollToCheckIns() {
             var body = SeleniumProvider.Driver.FindElement(By.CssSelector("body"));
             for (var i = 0; i < 2; i++) {
@@ -152,6 +163,8 @@ namespace FB_Data_Analysis.Classes {
 
         public static void ScrollToBottom() {
 
+            var watch = StartNew();
+
             var driver = SeleniumProvider.Driver;
             
             var body = driver.FindElement(By.CssSelector("body"));
@@ -159,34 +172,66 @@ namespace FB_Data_Analysis.Classes {
             
             while (true) {
                 body.SendKeys(Keys.PageDown);
-                Wait(2500, 500);
+                Wait(1500, 500);
                 var q = driver.ExecuteScript("return document.body.scrollHeight + ''");
 
                 int.TryParse((string) q, out var a);
                 int.TryParse((string) curHeight, out var b);
                 
                 if (a == b) {
-                    //Print("Equal", ConsoleColor.Blue);
+                    watch.Stop();
+                    Print($"Done in {watch.ElapsedMilliseconds / 1000} seconds");
                     
                     return;
                 }
                 curHeight = q;
-                //Print($"Current height is {curHeight} {curHeight.GetType()}, q is {q} {q.GetType()}");
             }
+        }
+        
+        public static void ScrollToBottom(int milisecondsInterval, int maxTimeInSeconds) {
 
-//            SeleniumProvider.Driver
-//                .ExecuteScript("var curHeight = document.body.scrollHeight;" +
-//                               "var x = setInterval(() => {" +
-//                               "    scrollBy(0, 2000); " +
-//                               "    setTimeout(() => {" +
-//                               "        let h = document.body.scrollHeight;" +
-//                               "        if(h === curHeight) {" +
-//                               "            clearInterval(x);" +
-//                               "        } else {" +
-//                               "            curHeight = h;" +
-//                               "        }" +
-//                               "    }, 1000);" +
-//                               "}, 1000)");
+            var watch = StartNew();
+
+            var driver = SeleniumProvider.Driver;
+            
+            var body = driver.FindElement(By.CssSelector("body"));
+            var curHeight = driver.ExecuteScript("return document.body.scrollHeight + ''");
+            
+            while (true) {
+                body.SendKeys(Keys.PageDown);
+                Wait(milisecondsInterval, 100);
+                var q = driver.ExecuteScript("return document.body.scrollHeight + ''");
+
+                int.TryParse((string) q, out var a);
+                int.TryParse((string) curHeight, out var b);
+                
+                
+                if (watch.ElapsedMilliseconds > 1000 * maxTimeInSeconds) {
+                    watch.Stop();
+                    Print($"Limit {maxTimeInSeconds} reached {watch.ElapsedMilliseconds / 1000}, stopping...");
+                    return;
+                }
+                
+                if (a == b) {
+                    
+                    // double check with delay
+                    Wait(2000, 1000);
+                    
+                    var q2 = driver.ExecuteScript("return document.body.scrollHeight + ''");
+                    int.TryParse((string) q2, out var a2);
+                    int.TryParse((string) curHeight, out var b2);
+
+                    if (a2 == b2) {
+                        watch.Stop();
+                        Print($"Done in {watch.ElapsedMilliseconds / 1000} seconds");
+                    
+                        return;
+                    }
+                    Print($"Fake done detecked, scrolling...", ConsoleColor.Magenta);
+                    //ScrollToBottom(milisecondsInterval);
+                }
+                curHeight = q;
+            }
         }
 
         public static void ClickOnMore(string elementId) {
@@ -252,6 +297,8 @@ namespace FB_Data_Analysis.Classes {
                 // if the current web element has a cat in it's id
                 if (!cats.Any(e => actualId.Contains(e))) continue;
                 // check if it has a See All button
+                
+                // ToDO: change from hard coded ID !!!!!!!!!!!!!!!!!!!!!
                 var but = SeleniumProvider.Driver
                     .FindElementsByXPath("//div[@id='pagelet_timeline_medley_movies']//span[@class='_3t5 fwb']");
                 if (but.Count <= 0) continue;

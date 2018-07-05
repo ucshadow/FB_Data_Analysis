@@ -56,13 +56,20 @@ namespace FB_Data_Analysis.Classes {
         public void MainLoop() {
 
             _singleUser =
-                "https://www.facebook.com/victoria.sotropa.9/about";
+                //"https://www.facebook.com/butnariuovidiu";
+                //"https://www.facebook.com/profile.php?id=100008517060027/about";
+                //"https://www.facebook.com/chanda.parajuli.37/about";
+                //"https://www.facebook.com/victoria.sotropa.9/about";
                 //"https://www.facebook.com/veronika.dumnean/about";
                 //"https://www.facebook.com/ana.pruteanu.39/about";
+                //"https://www.facebook.com/beschi.reni";
+                "https://www.facebook.com/patricia.ramiromoreno";
             
             Print("Main loop started");
             Print("");
             GetGroupPage();
+            
+            GetAboutTab();
             
             ScrollToBottom();
             //OpenUserInNewTab();
@@ -87,7 +94,7 @@ namespace FB_Data_Analysis.Classes {
         private void GetAboutTab() {
             var row = _driver.FindElementById("fbTimelineHeadline");
             var buttons = row.FindElements(By.ClassName("_6-6"));
-            Wait(2000, 1000);
+            //Wait(2000, 1000);
             buttons[1].Click();
 //            var href = buttons[1].GetAttribute("href");
 //            _driver.Url = href;

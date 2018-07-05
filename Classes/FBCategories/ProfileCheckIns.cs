@@ -15,32 +15,34 @@ namespace FB_Data_Analysis.Classes.FBCategories {
             
         }
 
-        public void Scrap(string url) {
+        public void Scrap(string title) {
+            
+            Scrap(title, "pagelet_timeline_medley_map", "CheckIns");
             //if (!TabIsPresent("Check-Ins")) return;
             
-            Print($"Scrapping Check-Ins -> {url}", ConsoleColor.DarkRed);
-            
-            
-            Driver.Url = url;
-            
-            //ScrollToElement("pagelet_timeline_medley_map");
-            //ClickOnMore("pagelet_timeline_medley_map");
-
-            Wait(1000, 200);
-
-            ScrollToBottom();
-
-            Extract("Place", "CheckIns", "pagelet_timeline_medley_map");
-
-            ScrollToElement("pagelet_timeline_medley_map");
-
-            // Special click since tab 1 is inactive.
-            ClickNavBarButton(2);
-            Print("------------------------------ ------------------ -------------");
-            
-            ScrollToBottom();
-            
-            Extract("Recent", "CheckIns", "pagelet_timeline_medley_map");
+//            Print($"Scrapping Check-Ins -> {title}", ConsoleColor.DarkRed);
+//            
+//            
+//            //Driver.Url = title;
+//            
+//            //ScrollToElement("pagelet_timeline_medley_map");
+//            //ClickOnMore("pagelet_timeline_medley_map");
+//
+//            Wait(1000, 200);
+//
+//            ScrollToBottom();
+//
+//            Extract("Place", "CheckIns", "pagelet_timeline_medley_map");
+//
+//            ScrollToElement("pagelet_timeline_medley_map");
+//
+//            // Special click since tab 1 is inactive.
+//            ClickNavBarButton(2);
+//            Print("------------------------------ ------------------ -------------");
+//            
+//            ScrollToBottom();
+//            
+//            Extract("Recent", "CheckIns", "pagelet_timeline_medley_map");
 
 
 

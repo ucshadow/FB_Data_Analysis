@@ -7,8 +7,8 @@ namespace FB_Data_Analysis.Classes.FBCategories {
         
         public ProfileDummy(User user) : base(user) {}
 
-        public void Scrap(string url) {
-            Print($"Dummy profile {url}", ConsoleColor.Red);
+        public void Scrap(string title) {
+            Print($"Dummy profile {title}", ConsoleColor.Red);
         }
     }
 }

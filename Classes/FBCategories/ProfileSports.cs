@@ -8,9 +8,9 @@ namespace FB_Data_Analysis.Classes.FBCategories {
         public ProfileSports(User user) : base(user) {
         }
 
-        public void Scrap(string url) {
+        public void Scrap(string title) {
             
-            Scrap(url, "pagelet_timeline_medley_sports", "Sports");
+            Scrap(title, "pagelet_timeline_medley_sports", "Sports");
             
 //            Print($"Scrapping Sports -> {url}", ConsoleColor.DarkRed);
 //            

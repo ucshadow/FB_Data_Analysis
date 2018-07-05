@@ -1,5 +1,5 @@
 ﻿namespace FB_Data_Analysis.Classes {
     public interface IPageTab {
-        void Scrap(string url);
+        void Scrap(string title);
     }
 }

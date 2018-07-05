@@ -8,9 +8,9 @@ namespace FB_Data_Analysis.Classes.FBCategories {
         public ProfileMusic(User user) : base(user) {
         } 
         
-        public void Scrap(string url) {
+        public void Scrap(string title) {
 
-            Scrap(url, "pagelet_timeline_medley_music", "Music");
+            Scrap(title, "pagelet_timeline_medley_music", "Music");
             
 //            var id = "pagelet_timeline_medley_music";
 //            
