@@ -22,7 +22,10 @@ namespace FB_Data_Analysis.Classes.Util {
         }
 
         protected void ClickNavBarButton(int buttonIndex) {
-            var navButtons = Driver.FindElementsByClassName("_3sz");
+            var navButtons = SeleniumProvider.Driver.FindElementsByClassName("_3sz");
+
+            if (navButtons.Count - 1 < buttonIndex) return;
+            
             Print($"Clicking on {navButtons[buttonIndex]?.Text}", ConsoleColor.Gray);
             
             ScrollToElement(navButtons[buttonIndex]);

@@ -11,7 +11,7 @@ using OpenQA.Selenium.Chrome;
 using static FB_Data_Analysis.Classes.Helpers;
 
 namespace FB_Data_Analysis.Classes.FBCategories {
-    public class ProfileAbout {
+    public class ProfileAbout : IPageTab {
         private readonly ChromeDriver _driver;
         private User _user;
         private string _tabClass = "_4qm1";
@@ -19,13 +19,13 @@ namespace FB_Data_Analysis.Classes.FBCategories {
         public ProfileAbout(User user) {
             _user = user;
             _driver = SeleniumProvider.Driver;
-                
-            Scrap();
         }
 
-        private void Scrap() {
+        public void Scrap(string title) {
             
             if (!TabIsPresent("About")) return;
+            
+            Print($"Scrapping -> {title}", ConsoleColor.DarkRed);
 
             ScrollToBottom();
 

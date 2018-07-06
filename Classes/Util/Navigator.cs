@@ -20,11 +20,11 @@ namespace FB_Data_Analysis.Classes {
         private List<string> _alreadyVisited;
         
         
-        // todo: add reviews
         private readonly string[] _cats = {
-            //"map", "sports", "music", "movies", "tv", "books" ,"likes", "reviews",
-            //"groups", "games"
-            "likes"
+            "map", "sports", "music", "movies", "tv", "books" ,"likes", "reviews",
+            "events", "games", "fitness",
+            // undiscovered
+            "groups", "events"
         };
 
         public Navigator(User user) {
@@ -47,13 +47,13 @@ namespace FB_Data_Analysis.Classes {
             _workers.Add("Books", new ProfileBooks(_user));
             _workers.Add("Apps and Games", new ProfileAppsAndGames(_user));
             _workers.Add("Likes", new ProfileLikes(_user));
+            _workers.Add("Reviews", new ProfileReviews(_user));
+            _workers.Add("Events", new ProfileEvents(_user));
+            _workers.Add("Fitness", new ProfileFitness(_user));
 
             _workers.Add("Friends", new ProfileDummy(_user));
             _workers.Add("Photos", new ProfileDummy(_user));
             _workers.Add("Videos", new ProfileDummy(_user));
-            _workers.Add("Events", new ProfileDummy(_user));
-            _workers.Add("Fitness", new ProfileDummy(_user));
-            _workers.Add("Reviews", new ProfileDummy(_user));
             _workers.Add("Notes", new ProfileDummy(_user));
         }
 

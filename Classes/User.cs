@@ -9,6 +9,7 @@ namespace FB_Data_Analysis.Classes {
 
         public AboutClass About { get; set; }
         public MiscClass Misc { get; set; }
+        public string Url { get; set; }
 
         public User() {
             About = new AboutClass();
@@ -20,8 +21,10 @@ namespace FB_Data_Analysis.Classes {
             About.PrintAbout();
             Misc.PrintMisc();
         }
-        
-        
+
+        public void Jsonise() {
+            
+        }
         
     }
 

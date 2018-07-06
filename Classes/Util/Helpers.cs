@@ -12,6 +12,9 @@ using static System.Diagnostics.Stopwatch;
 
 namespace FB_Data_Analysis.Classes {
     public static class Helpers {
+
+        public static int GlobalDelay = 1500;
+        
         public static void Wait(double delay, double interval) {
             // Causes the WebDriver to wait for at least a fixed delay
             var now = DateTime.Now;
@@ -172,7 +175,7 @@ namespace FB_Data_Analysis.Classes {
             
             while (true) {
                 body.SendKeys(Keys.PageDown);
-                Wait(1500, 500);
+                Wait(GlobalDelay, 500);
                 var q = driver.ExecuteScript("return document.body.scrollHeight + ''");
 
                 int.TryParse((string) q, out var a);
@@ -243,7 +246,7 @@ namespace FB_Data_Analysis.Classes {
             var but = SeleniumProvider.Driver.FindElementsByClassName("_6-6")[1];
             ScrollToElement("fbProfileCover");
             but.Click();
-            Wait(2000, 1000);
+            Wait(GlobalDelay, 1000);
         }
 
         public static bool TabIsPresent(string tabName) {

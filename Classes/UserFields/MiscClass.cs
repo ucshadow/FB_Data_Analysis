@@ -21,6 +21,9 @@ namespace FB_Data_Analysis.Classes.UserFields {
         public List<string> Books { get; set; }
         public List<string> AppsandGames { get; set; }
         public List<string> Likes { get; set; }
+        public List<string> Reviews { get; set; }
+        public List<string> Events { get; set; }
+        public List<string> Fitness { get; set; }
 
         public MiscClass() {
             CheckIns = new List<string>();
@@ -31,6 +34,9 @@ namespace FB_Data_Analysis.Classes.UserFields {
             Books = new List<string>();
             AppsandGames = new List<string>();
             Likes = new List<string>();
+            Reviews = new List<string>();
+            Events = new List<string>();
+            Fitness = new List<string>();
             
             
             _allFields = new Dictionary<string, List<string>> {
@@ -42,6 +48,9 @@ namespace FB_Data_Analysis.Classes.UserFields {
                 {"Books", Books},
                 {"AppsAndGames", AppsandGames},
                 {"Likes", Likes},
+                {"Reviews", Reviews},
+                {"Events", Events},
+                {"Fitness", Fitness},
             };
         }
 

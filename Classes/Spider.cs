@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using FB_Data_Analysis.Classes.FBCategories;
+using FB_Data_Analysis.Classes.Util;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using static FB_Data_Analysis.Classes.Helpers;
@@ -55,33 +56,83 @@ namespace FB_Data_Analysis.Classes {
         // ToDo: check if each panel is Present!! 
         public void MainLoop() {
 
-            _singleUser =
-                //"https://www.facebook.com/butnariuovidiu";
-                //"https://www.facebook.com/profile.php?id=100008517060027/about";
-                //"https://www.facebook.com/chanda.parajuli.37/about";
-                //"https://www.facebook.com/victoria.sotropa.9/about";
-                //"https://www.facebook.com/veronika.dumnean/about";
-                //"https://www.facebook.com/ana.pruteanu.39/about";
-                //"https://www.facebook.com/beschi.reni";
-                "https://www.facebook.com/patricia.ramiromoreno";
+            GlobalDelay = 2000;
+            
+            SingleLoop();
             
             Print("Main loop started");
             Print("");
+
             GetGroupPage();
             
+            var x = new GroupParser("https://www.facebook.com/groups/1379225572136343/members/");
+            x.GetEm();
+
+            /*
+             *
+             * oyy tgooooa
+             * 
+             */
+
+            x.UserHrefs.ForEach(e => {
+                
+                Print($"Getting {e}", ConsoleColor.Black);
+                
+                _driver.Url = e;
+                
+                Wait(1000, 500);
+                
+                GetAboutTab();
+            
+                ScrollToBottom();
+                //OpenUserInNewTab();
+                //GetAboutTab();
+
+                var u = new User {Url = e};
+
+
+                _nav = new Navigator(u);
+            
+                // get about, everyone has this tab
+                //var about = new ProfileAbout(u);
+            
+                _nav.Perform();
+            
+                //var checkIns = new ProfileCheckIns(u);
+            
+                Print("\n ---- \n");
+                u.PrintUser();
+            });
+        }
+
+        public void SingleLoop() {
+            Print("Single loop started");
+            Print("");
+            
+            var e = "https://www.facebook.com/mark.zuckerberg";
+
+            GetGroupPage();
+            
+            Print($"Getting {e}", ConsoleColor.Black);
+                
+            _driver.Url = e;
+                
+            Wait(1000, 500);
+                
             GetAboutTab();
             
             ScrollToBottom();
             //OpenUserInNewTab();
             //GetAboutTab();
-            
-            // toDo: this should be in a loop
 
-            var u = new User();
+            var u = new User {Url = e};
+
+
             _nav = new Navigator(u);
             
             // get about, everyone has this tab
-            //var about = new ProfileAbout(u);
+            var about = new ProfileAbout(u);
+            about.Scrap("About");
             
             _nav.Perform();
             
@@ -96,6 +147,7 @@ namespace FB_Data_Analysis.Classes {
             var buttons = row.FindElements(By.ClassName("_6-6"));
             //Wait(2000, 1000);
             buttons[1].Click();
+            Wait(1500, 500);
 //            var href = buttons[1].GetAttribute("href");
 //            _driver.Url = href;
             //_driver.Url = href.Count == 1 ? href[0].GetAttribute("href") : href[1].GetAttribute("href");
@@ -150,7 +202,7 @@ namespace FB_Data_Analysis.Classes {
             _driver.FindElementById("pass").SendKeys(_password);
             _driver.FindElementById("loginbutton").Click();
 
-            _driver.Url = _singleUser;
+            //_driver.Url = _singleUser;
 
             //Helpers.Wait(_driver, 2000, 1000);
             //_driver.Url = _groupUrl;
