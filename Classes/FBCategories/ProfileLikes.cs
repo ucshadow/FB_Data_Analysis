@@ -20,6 +20,7 @@ namespace FB_Data_Analysis.Classes.FBCategories {
 
         private void ExtractData(string id) {
             var allElements = Driver.FindElementByXPath($"//div[@id='{id}']").FindElements(By.ClassName("_42ef"));
+            Print($"{allElements.Count} likes found...", ConsoleColor.DarkGreen);
             
             if (allElements.Count <= 0) return;
             foreach (var element in allElements) {

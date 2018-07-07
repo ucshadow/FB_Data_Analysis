@@ -38,7 +38,12 @@ namespace FB_Data_Analysis.Classes {
 
             var spaced = CalculateDistance($"[ {cName}: {methodName} ]");
 
-            WriteLine($"{spaced}  ->  {message}");
+            var t = DateTime.Now;
+            var h = t.Hour < 10 ? $"0{t.Hour}" : $"{t.Hour}";
+            var m = t.Minute < 10 ? $"0{t.Minute}" : $"{t.Minute}";
+            var s = t.Second < 10 ? $"0{t.Second}" : $"{t.Second}";
+            var time = $"{h}:{m}:{s}";
+            WriteLine($"{time} {spaced}  ->  {message}");
         }
 
         public static void Print(string message, ConsoleColor textColor,
@@ -49,22 +54,23 @@ namespace FB_Data_Analysis.Classes {
             ForegroundColor = textColor;
 
             var spaced = CalculateDistance($"[ {cName}: {methodName} ]");
-
-            WriteLine($"{spaced}  ->  {message}");
+            
+            var t = DateTime.Now;
+            var h = t.Hour < 10 ? $"0{t.Hour}" : $"{t.Hour}";
+            var m = t.Minute < 10 ? $"0{t.Minute}" : $"{t.Minute}";
+            var s = t.Second < 10 ? $"0{t.Second}" : $"{t.Second}";
+            var time = $"{h}:{m}:{s}";
+            WriteLine($"{time} {spaced}  ->  {message}");
 
             ForegroundColor = ConsoleColor.White;
         }
 
         public static bool ElementIsPresent(ISearchContext element, By by) {
-            var watch = StartNew();
             var all = element.FindElements(by);
-            watch.Stop();
-            Print($"Done in {watch.ElapsedMilliseconds / 1000} seconds");
             return all.Count > 0;
         }
 
         public static string ExtractTextValueFromElement(ISearchContext element, bool scrapDivs) {
-            var watch = StartNew();
             var res = new List<string>();
             var allSpans = element.FindElements(By.CssSelector("span"));
             var allDivs = element.FindElements(By.CssSelector("div"));
@@ -91,8 +97,6 @@ namespace FB_Data_Analysis.Classes {
                 }
             }
 
-            watch.Stop();
-            Print($"Done in {watch.ElapsedMilliseconds / 1000} seconds");
             return string.Join(" | ", res);
         }
 
@@ -105,7 +109,7 @@ namespace FB_Data_Analysis.Classes {
         }
 
         private static string CalculateDistance(string s) {
-            for (var i = s.Length; i < 50; i++) {
+            for (var i = s.Length; i < 55; i++) {
                 s += " ";
             }
 
@@ -165,9 +169,6 @@ namespace FB_Data_Analysis.Classes {
         }
 
         public static void ScrollToBottom() {
-
-            var watch = StartNew();
-
             var driver = SeleniumProvider.Driver;
             
             var body = driver.FindElement(By.CssSelector("body"));
@@ -182,9 +183,6 @@ namespace FB_Data_Analysis.Classes {
                 int.TryParse((string) curHeight, out var b);
                 
                 if (a == b) {
-                    watch.Stop();
-                    Print($"Done in {watch.ElapsedMilliseconds / 1000} seconds");
-                    
                     return;
                 }
                 curHeight = q;
@@ -209,11 +207,11 @@ namespace FB_Data_Analysis.Classes {
                 int.TryParse((string) curHeight, out var b);
                 
                 
-                if (watch.ElapsedMilliseconds > 1000 * maxTimeInSeconds) {
-                    watch.Stop();
-                    Print($"Limit {maxTimeInSeconds} reached {watch.ElapsedMilliseconds / 1000}, stopping...");
-                    return;
-                }
+//                if (watch.ElapsedMilliseconds > 1000 * maxTimeInSeconds) {
+//                    watch.Stop();
+//                    Print($"Limit {maxTimeInSeconds} reached {watch.ElapsedMilliseconds / 1000}, stopping...");
+//                    return;
+//                }
                 
                 if (a == b) {
                     

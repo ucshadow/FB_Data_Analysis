@@ -19,7 +19,6 @@ namespace FB_Data_Analysis.Classes {
         private Dictionary<string, IPageTab> _workers;
         private List<string> _alreadyVisited;
         
-        
         private readonly string[] _cats = {
             "map", "sports", "music", "movies", "tv", "books" ,"likes", "reviews",
             "events", "games", "fitness",
@@ -141,61 +140,5 @@ namespace FB_Data_Analysis.Classes {
             var check = _driver.FindElementsByXPath($"//div[@id='{id}']//a[@class='_51sx']");
             return check.Count > 0 ? check[0]?.Text : "Momo";
         }
-
-//        public void Perform_() {
-//            //ScrollToBottom();
-//
-//            // a elements
-//            var allTabSeeAllButton = _driver.FindElementsByClassName("_3t5");
-//
-//            // also a's, get the text, should be [1:] to syncronise with the buttons
-//            var allTabTitles = _driver.FindElementsByClassName("_51sx");
-//
-//            ScrollToElement(allTabSeeAllButton[0]);
-//
-//            while (allTabSeeAllButton.Count > 0) {
-//                if (_firstLoad) {
-//                    ClickFirstButton();
-//                    ScrollToBottom();
-//                    allTabSeeAllButton = _driver.FindElementsByClassName("_3t5");
-//                    allTabTitles = _driver.FindElementsByClassName("_51sx");
-//                    _firstLoad = false;
-//                }
-//                else {
-//                    var category = allTabTitles[0].Text;
-//
-//                    if (_workers.ContainsKey(category)) {
-//                        Print($"Found category for worker {category}");
-//                        _alreadyVisited.Add(category);
-//
-//                        Wait(1000, 500);
-//
-//                        // start from check ins, the rest are skipped
-//                        ScrollToElement(allTabSeeAllButton[0]);
-//                        Wait(1000, 500);
-//                        try { 
-//                            allTabSeeAllButton[0].Click();
-//                            
-//                        }
-//                        catch (Exception e) {
-//                            Console.WriteLine(e);
-//                            Print($"{category} has no button! ", ConsoleColor.Magenta);
-//                            
-//                            Wait(1000, 500);
-//                            continue;
-//                        }
-//                        ScrollToBottom();
-//                        
-//                    }
-//                    else {
-//                        Print($"{category} has no worker, waiting 2 seconds :D");
-//                        Wait(2000, 500);
-//                    }
-//
-//                    allTabSeeAllButton = _driver.FindElementsByClassName("_3t5");
-//                    allTabTitles = _driver.FindElementsByClassName("_51sx");
-//                }
-//            }
-//        }
     }
 }

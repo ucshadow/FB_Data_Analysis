@@ -17,7 +17,7 @@ namespace FB_Data_Analysis.Classes.FBCategories {
             
             var elements = Driver.FindElementById("id").FindElements(By.ClassName("_4cbv"));
 
-            ClickNavBarButton(1);
+            ClickNavBarButton(1, Driver.FindElementById("id"));
             
             foreach (var webElement in elements) {
                 var a = webElement.FindElement(By.CssSelector("a"));

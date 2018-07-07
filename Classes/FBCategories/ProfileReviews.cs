@@ -26,7 +26,9 @@ namespace FB_Data_Analysis.Classes.FBCategories {
                 var name = title?.Text;
                 var href = title?.GetAttribute("href");
 
-                var rating = element.FindElement(By.TagName("u"))?.Text;
+                var ratingExists = ElementIsPresent(element, By.TagName("u"));
+                
+                var rating = ratingExists ? element.FindElement(By.TagName("u"))?.Text : "";
 
                 var timeStamp = GetTimeStamp(element);
 

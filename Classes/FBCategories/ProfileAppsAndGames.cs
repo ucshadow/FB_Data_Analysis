@@ -8,7 +8,7 @@ namespace FB_Data_Analysis.Classes.FBCategories {
         public void Scrap(string title) {
             var id = "pagelet_timeline_medley_games";
 
-            MoviesScrap(title, id);
+            GeneralScrap(title, id);
         }
     }
 }

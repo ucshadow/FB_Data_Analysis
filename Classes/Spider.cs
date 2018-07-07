@@ -39,14 +39,14 @@ namespace FB_Data_Analysis.Classes {
             _userCount = userCount;
             _visited = new List<string>();
             _users = new List<User>();
-            
+
             AddFileToVisitedSet();
 
             _loginUrl = "https://www.facebook.com";
             _driver = SeleniumProvider.Driver;
             //_mainTab = _driver.CurrentWindowHandle;
             _allProfiles = new ReadOnlyCollection<IWebElement>(new List<IWebElement>());
-            
+
             // toDo: ??
             //_nav = new Navigator(new User());
 
@@ -55,16 +55,15 @@ namespace FB_Data_Analysis.Classes {
 
         // ToDo: check if each panel is Present!! 
         public void MainLoop() {
-
             GlobalDelay = 2000;
-            
-            SingleLoop();
-            
+
+            //SingleLoop();
+
             Print("Main loop started");
             Print("");
 
             GetGroupPage();
-            
+
             var x = new GroupParser("https://www.facebook.com/groups/1379225572136343/members/");
             x.GetEm();
 
@@ -75,52 +74,53 @@ namespace FB_Data_Analysis.Classes {
              */
 
             x.UserHrefs.ForEach(e => {
-                
-                Print($"Getting {e}", ConsoleColor.Black);
-                
-                _driver.Url = e;
-                
-                Wait(1000, 500);
-                
-                GetAboutTab();
-            
-                ScrollToBottom();
-                //OpenUserInNewTab();
-                //GetAboutTab();
+                if (!_visited.Contains(e)) {
+                    Print($"Getting {e}", ConsoleColor.Black);
 
-                var u = new User {Url = e};
+                    _driver.Url = e;
 
+                    SaveHrefToVisited(e);
 
-                _nav = new Navigator(u);
-            
-                // get about, everyone has this tab
-                //var about = new ProfileAbout(u);
-            
-                _nav.Perform();
-            
-                //var checkIns = new ProfileCheckIns(u);
-            
-                Print("\n ---- \n");
-                u.PrintUser();
+                    Wait(1000, 500);
+
+                    GetAboutTab();
+
+                    ScrollToBottom();
+
+                    var u = new User {Url = e};
+
+                    _nav = new Navigator(u);
+
+                    _nav.Perform();
+
+                    Print("\n ---- \n");
+                    u.PrintUser();
+                    u.Jsonise();
+                }
+                else {
+                    Print($"{e} alredy visited, skipping...", ConsoleColor.Black);
+
+                }
+                
             });
         }
 
         public void SingleLoop() {
             Print("Single loop started");
             Print("");
-            
-            var e = "https://www.facebook.com/mark.zuckerberg";
+
+            var e = "https://www.facebook.com/cornea.costea";
 
             GetGroupPage();
-            
+
             Print($"Getting {e}", ConsoleColor.Black);
-                
+
             _driver.Url = e;
-                
+
             Wait(1000, 500);
-                
+
             GetAboutTab();
-            
+
             ScrollToBottom();
             //OpenUserInNewTab();
             //GetAboutTab();
@@ -129,17 +129,21 @@ namespace FB_Data_Analysis.Classes {
 
 
             _nav = new Navigator(u);
-            
+
             // get about, everyone has this tab
             var about = new ProfileAbout(u);
             about.Scrap("About");
-            
+
             _nav.Perform();
-            
+
             //var checkIns = new ProfileCheckIns(u);
-            
+
             Print("\n ---- \n");
             u.PrintUser();
+
+            u.Jsonise();
+
+            Environment.Exit(0);
         }
 
         private void GetAboutTab() {
@@ -181,7 +185,7 @@ namespace FB_Data_Analysis.Classes {
         }
 
         private void SaveHrefToVisited(string href) {
-            using (var sw = File.AppendText(Directory.GetCurrentDirectory() + "/" + _fileName)) {
+            using (var sw = File.AppendText(Directory.GetCurrentDirectory() + "/visited.dt")) {
                 sw.WriteLine(href);
             }
         }
@@ -195,9 +199,9 @@ namespace FB_Data_Analysis.Classes {
             //_driver.Url = _groupUrl;
 
             _driver.Url = _loginUrl;
-            
+
             // should be GroupUrl! this is for testing only
-            
+
             _driver.FindElementById("email").SendKeys(_email);
             _driver.FindElementById("pass").SendKeys(_password);
             _driver.FindElementById("loginbutton").Click();
@@ -229,20 +233,27 @@ namespace FB_Data_Analysis.Classes {
         private void AddFileToVisitedSet() {
             var dir = Directory.GetCurrentDirectory();
 
-            _fileName = new string(_groupUrl.Where(char.IsDigit).ToArray()) + ".dt";
+            var lines = File.ReadAllLines(dir + "/visited.dt");
+            foreach (var line in lines) {
+                _visited.Add(line);
+            }
 
-            if (!File.Exists(dir + "/" + _fileName)) {
-                Print($"Path is: {dir + "/" + _fileName}");
-                File.Create(dir + "/" + _fileName);
-                Print($"File {_fileName} was created", ConsoleColor.DarkYellow);
-            }
-            else {
-                var lines = File.ReadAllLines(dir + "/" + _fileName);
-                foreach (var line in lines) {
-                    _visited.Add(line);
-                }
-                Print($"{lines.Length} visited profiles added to visited list");
-            }
+            Print($"{lines.Length} visited profiles added to visited list");
+
+//            _fileName = new string(_groupUrl.Where(char.IsDigit).ToArray()) + ".dt";
+//
+//            if (!File.Exists(dir + "/" + _fileName)) {
+//                Print($"Path is: {dir + "/" + _fileName}");
+//                File.Create(dir + "/" + _fileName);
+//                Print($"File {_fileName} was created", ConsoleColor.DarkYellow);
+//            }
+//            else {
+//                var lines = File.ReadAllLines(dir + "/" + _fileName);
+//                foreach (var line in lines) {
+//                    _visited.Add(line);
+//                }
+//                Print($"{lines.Length} visited profiles added to visited list");
+//            }
         }
     }
 }

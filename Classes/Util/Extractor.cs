@@ -16,14 +16,14 @@ namespace FB_Data_Analysis.Classes.Util {
             User = user;
         }
 
-        protected void Extract(string type, string miscCategoryName, string tabId) {
+        protected void Extract(string type, string miscCategoryName, string tabId, string title) {
             var d = Driver.FindElementById(tabId);
-            GetFieldAndLink(d, type, miscCategoryName);
+            GetFieldAndLink(d, type, miscCategoryName, title);
         }
 
-        protected void ClickNavBarButton(int buttonIndex) {
-            var navButtons = SeleniumProvider.Driver.FindElementsByClassName("_3sz");
-
+        protected void ClickNavBarButton(int buttonIndex, IWebElement element) {
+            var navButtons = element.FindElements(By.ClassName("_3sz"));
+            
             if (navButtons.Count - 1 < buttonIndex) return;
             
             Print($"Clicking on {navButtons[buttonIndex]?.Text}", ConsoleColor.Gray);
@@ -37,7 +37,7 @@ namespace FB_Data_Analysis.Classes.Util {
             Wait(1000, 200);
         }
 
-        private void GetFieldAndLink(ISearchContext element, string type, string miscCategoryName) {
+        private void GetFieldAndLink(ISearchContext element, string type, string miscCategoryName, string title) {
             var dataBoxes = element.FindElements(By.ClassName("_3owb"));
             for (var i = 0; i < dataBoxes.Count; i++) {
                 var webElement = dataBoxes[i];
@@ -45,8 +45,8 @@ namespace FB_Data_Analysis.Classes.Util {
                 var key = row?.Text;
                 var value = row?.GetAttribute("href");
                 //Print($"[{type}] {key}: {value}", ConsoleColor.DarkGreen);
-                if (key?.Trim().Length == 0) key = $"Place_{i}";
-                User.Misc.AddData(miscCategoryName, $"[{type}] {key}: {value}");
+                if (key?.Trim().Length == 0) key = $"{title}_{i}";
+                User.Misc.AddData(miscCategoryName, $"[{type}] {key} -> {value}");
             }
         }
 
@@ -62,18 +62,27 @@ namespace FB_Data_Analysis.Classes.Util {
 
             for (var i = 0; i < butts.Count; i++) {
                 var webElement = butts[i];
+
+                if (name == "CheckIns") {
+                    if(!CheckMapButtons(webElement.Text)) continue;
+                }
+                
                 
                 if(IsButtonBanned(webElement)) continue;
                 
-                ClickNavBarButton(i);
+                ClickNavBarButton(i, SeleniumProvider.Driver.FindElementById(id));
                 
                 ScrollToBottom();
                 
-                Extract(webElement.Text, name, id);
+                Extract(webElement.Text, name, id, title);
                 Print("------------------------------ ------------------ -------------");
                 
                 ScrollToElement(id);
             }
+        }
+
+        private bool CheckMapButtons(string s) {
+            return s == "Places" || s == "Recent";
         }
 
         private bool IsButtonBanned(IWebElement button) {
@@ -104,7 +113,7 @@ namespace FB_Data_Analysis.Classes.Util {
             }
         }
 
-        public void MoviesScrap(string title, string id) {
+        public void GeneralScrap(string title, string id) {
 
             Print($"Scrapping -> {title}", ConsoleColor.DarkRed);
 
@@ -116,7 +125,7 @@ namespace FB_Data_Analysis.Classes.Util {
 
             for (var i = 0; i < butts.Count; i++) {
                 var webElement = butts[i];
-                ClickNavBarButton(i);
+                ClickNavBarButton(i, SeleniumProvider.Driver.FindElementById(id));
 
                 ScrollToBottom();
 
