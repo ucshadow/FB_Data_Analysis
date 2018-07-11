@@ -69,6 +69,16 @@ namespace FB_Data_Analysis.Classes {
             var all = element.FindElements(by);
             return all.Count > 0;
         }
+        
+        public static IWebElement ElementIsPresent(ISearchContext element, By by, bool get) {
+            var all = element.FindElements(by);
+            return all.Count > 0 ? all[0] : null;
+        }
+        
+        public static ReadOnlyCollection<IWebElement> ElementIsPresent(ISearchContext element, By by, int get) {
+            var all = element.FindElements(by);
+            return all;
+        }
 
         public static string ExtractTextValueFromElement(ISearchContext element, bool scrapDivs) {
             var res = new List<string>();
