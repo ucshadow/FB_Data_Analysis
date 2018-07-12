@@ -2,12 +2,10 @@
 using static FB_Data_Analysis.Classes.Helpers;
 
 namespace FB_Data_Analysis.MobileVersion.MFBCategories {
-    public struct Work : IProfileField {
-        public string WorkPlace;
-        public string Title;
-        public string TimeSpan;
+    public struct Living : IProfileField {
+
         public string Location;
-        public string Comment;
+        public string Info;
 
         public void Log() {
             var x = GetType().GetFields();
@@ -15,5 +13,6 @@ namespace FB_Data_Analysis.MobileVersion.MFBCategories {
                 Print($"{fieldInfo.Name} -> {fieldInfo.GetValue(this)}", ConsoleColor.Green);
             }
         }
+        
     }
 }

@@ -4,21 +4,21 @@ using FB_Data_Analysis.MobileVersion.MFBCategories;
 using static FB_Data_Analysis.Classes.Helpers;
 
 namespace FB_Data_Analysis.MobileVersion {
-    public class GenericProfileDate {
+    public class GenericProfileData {
         
-        public Dictionary<string, IProfileField> Data;
+        public Dictionary<string, List<IProfileField>> Data;
         
 
-        public GenericProfileDate() {
-            Data = new Dictionary<string, IProfileField>();
+        public GenericProfileData() {
+            Data = new Dictionary<string, List<IProfileField>>();
         }
 
         public void AddData(string key, IProfileField value) {
             if (Data.ContainsKey(key)) {
-                Data[key] = value;
+                Data[key].Add(value);
             }
             else {
-                Data.Add(key, value);
+                Data[key] = new List<IProfileField> {value};
             }
         }
 

@@ -2,13 +2,14 @@
 using static FB_Data_Analysis.Classes.Helpers;
 
 namespace FB_Data_Analysis.MobileVersion.MFBCategories {
-    public struct Work : IProfileField {
-        public string WorkPlace;
-        public string Title;
-        public string TimeSpan;
-        public string Location;
-        public string Comment;
+    public struct Education : IProfileField {
 
+        public string Institution;
+        public string Type;
+        public string Profile;
+        public string Time;
+        public string Comment;
+        
         public void Log() {
             var x = GetType().GetFields();
             foreach (var fieldInfo in x) {

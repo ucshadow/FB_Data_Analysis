@@ -4,5 +4,6 @@ output/
 *.dt
 *.exe
 *.log
+*.json
 Program.cs
 log.txt

@@ -2,12 +2,11 @@
 using static FB_Data_Analysis.Classes.Helpers;
 
 namespace FB_Data_Analysis.MobileVersion.MFBCategories {
-    public struct Work : IProfileField {
-        public string WorkPlace;
-        public string Title;
-        public string TimeSpan;
-        public string Location;
-        public string Comment;
+    public struct FamilyMembers : IProfileField {
+
+        public string Name;
+        public string Relation;
+        public string Url;
 
         public void Log() {
             var x = GetType().GetFields();
