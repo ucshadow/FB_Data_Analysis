@@ -27,9 +27,7 @@ namespace FB_Data_Analysis.MobileVersion {
             var profileData = new GenericProfileData();
 
             GoToPageAndLogin(email, password);
-            //var url = "https://m.facebook.com/CristinaUngurean97/about";
-            //var url = "https://m.facebook.com/antonio.silva.7923/about";
-            //var url = "https://m.facebook.com/cornea.costea/about";
+            
             var url = "https://m.facebook.com/zuck/about";
 
             _driver.Url = url;
