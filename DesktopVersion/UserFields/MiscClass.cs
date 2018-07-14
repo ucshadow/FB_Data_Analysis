@@ -1,55 +1,58 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using static FB_Data_Analysis.Classes.Helpers;
+using FB_Data_Analysis.Classes;
+using FB_Data_Analysis.Classes.UserFields;
 
-namespace FB_Data_Analysis.Classes.UserFields {
+namespace FB_Data_Analysis.DesktopVersion.UserFields {
     public class MiscClass {
-        
         public object this[string propertyName] {
             get => GetType().GetProperty(propertyName).GetValue(this, null);
             set => GetType().GetProperty(propertyName).SetValue(this, value, null);
         }
-        
-        private readonly Dictionary<string, Dictionary<string, string>> _allFields;
 
-        public Dictionary<string, string> CheckIns { get; set; }
-        public Dictionary<string, string> Sports { get; set; }
-        public Dictionary<string, string> Music { get; set; }
-        public Dictionary<string, string> Movies { get; set; }
-        public Dictionary<string, string> TVShows { get; set; }
-        public Dictionary<string, string> Books { get; set; }
-        public Dictionary<string, string> AppsandGames { get; set; }
-        public Dictionary<string, string> Likes { get; set; }
-        public Dictionary<string, string> Reviews { get; set; }
-        public Dictionary<string, string> Events { get; set; }
-        public Dictionary<string, string> Fitness { get; set; }
+        private readonly Dictionary<string, List<IProfileField>> _allFields;
+        
+        public List<IProfileField> CheckIns { get; }
+        public List<IProfileField> Friends { get; }
+        public List<IProfileField> Likes { get; }
+        public List<IProfileField> Sports { get; }
+        public List<IProfileField> Music { get; }
+        public List<IProfileField> Movies { get; }
+        public List<IProfileField> TVShows { get; }
+        public List<IProfileField> Books { get; }
+        public List<IProfileField> Reviews { get; }
+        public List<IProfileField> Events { get; }
+        public List<IProfileField> Games { get; }
+        public List<IProfileField> Fitness { get; }
 
         public MiscClass() {
-            CheckIns = new Dictionary<string, string>();
-            Sports = new Dictionary<string, string>();
-            Music = new Dictionary<string, string>();
-            Movies = new Dictionary<string, string>();
-            TVShows = new Dictionary<string, string>();
-            Books = new Dictionary<string, string>();
-            AppsandGames = new Dictionary<string, string>();
-            Likes = new Dictionary<string, string>();
-            Reviews = new Dictionary<string, string>();
-            Events = new Dictionary<string, string>();
-            Fitness = new Dictionary<string, string>();
-            
-            
-            _allFields = new Dictionary<string, Dictionary<string, string>> {
+            CheckIns = new List<IProfileField>();
+            Friends = new List<IProfileField>();
+            Likes = new List<IProfileField>();
+            Sports = new List<IProfileField>();
+            Music = new List<IProfileField>();
+            Movies = new List<IProfileField>();
+            TVShows = new List<IProfileField>();
+            Books = new List<IProfileField>();
+            Reviews = new List<IProfileField>();
+            Events = new List<IProfileField>();
+            Games = new List<IProfileField>();
+            Fitness = new List<IProfileField>();
+
+
+            _allFields = new Dictionary<string, List<IProfileField>> {
                 {"CheckIns", CheckIns},
+                {"Friends", Friends},
+                {"Likes", Likes},
                 {"Sports", Sports},
                 {"Music", Music},
                 {"Movies", Movies},
                 {"TVShows", TVShows},
                 {"Books", Books},
-                {"AppsAndGames", AppsandGames},
-                {"Likes", Likes},
                 {"Reviews", Reviews},
                 {"Events", Events},
+                {"AppsAndGames", Games},
                 {"Fitness", Fitness},
             };
         }
@@ -57,24 +60,41 @@ namespace FB_Data_Analysis.Classes.UserFields {
         public void PrintMisc() {
             Console.WriteLine();
             foreach (var keyValuePair in _allFields) {
-                Print($"{keyValuePair.Key}:", ConsoleColor.DarkRed);
-                foreach (var kvp in keyValuePair.Value) {
-                    Print($"{kvp.Key}: {kvp.Value}");
-                }
+                Helpers.Print($"{keyValuePair.Key}:", ConsoleColor.DarkRed);
+                keyValuePair.Value.ForEach(e => e.Log());
                 //keyValuePair.Value.ForEach(e => Print(e, ConsoleColor.DarkYellow));
             }
         }
-        
-        public void AddData(string listName, string key, string value) {
 
+        public void AddData(string listName, string[] data) {
             var noSpace = Regex.Replace(listName, @"\s+", "");
             
-            Print($"adding {key}: {value} to {noSpace} len -> {noSpace.Length}", ConsoleColor.Yellow);
-            GetType().
-                GetProperty(noSpace).PropertyType.
-                GetMethod("Add").
-                Invoke(this[noSpace], new object[] {key, value});
+            //Print($"Trying to get type for FB_Data_Analysis.DesktopVersion.Models.{noSpace}Model");
+
+            var obj = (IProfileField) GetInstance($"FB_Data_Analysis.DesktopVersion.Models.{noSpace}Model");
+            //var obj = (IProfileField) Activator.CreateInstance(_allFields[noSpace].GetType());
+
+            //var local = new CheckInsModel();
+            obj.AddData(data);
+
+            //Helpers.Print($"adding {noSpace}", ConsoleColor.Yellow);
+            _allFields[noSpace].Add(obj);
+            //GetType().GetProperty(noSpace).PropertyType.GetMethod("Add").Invoke(this[noSpace], new object[] {obj});
         }
 
+        private object GetInstance(string strFullyQualifiedName) {
+            var type = Type.GetType(strFullyQualifiedName);
+            //Print($"Initial type {strFullyQualifiedName} is null", ConsoleColor.DarkYellow);
+            if (type != null)
+                return Activator.CreateInstance(type);
+            foreach (var asm in AppDomain.CurrentDomain.GetAssemblies()) {
+                //Print($"current asm {asm.FullName}", ConsoleColor.DarkYellow);
+                type = asm.GetType(strFullyQualifiedName);
+                if (type != null)
+                    return Activator.CreateInstance(type);
+            }
+
+            return null;
+        }
     }
 }

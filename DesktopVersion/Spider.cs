@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using FB_Data_Analysis.Classes.FBCategories;
+using FB_Data_Analysis.Classes;
 using FB_Data_Analysis.Classes.Util;
+using FB_Data_Analysis.DesktopVersion.FBCategories;
+using FB_Data_Analysis.DesktopVersion.Util;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using static FB_Data_Analysis.Classes.Helpers;
 
-namespace FB_Data_Analysis.Classes {
+namespace FB_Data_Analysis.DesktopVersion {
     public class Spider {
         private readonly string _loginUrl;
         private readonly string _groupUrl;
@@ -55,16 +55,16 @@ namespace FB_Data_Analysis.Classes {
 
         // ToDo: check if each panel is Present!! 
         public void MainLoop() {
-            GlobalDelay = 2000;
+            Helpers.GlobalDelay = 2000;
 
             SingleLoop();
 
-            Print("Main loop started");
-            Print("");
+            Helpers.Print("Main loop started");
+            Helpers.Print("");
 
             GetGroupPage();
 
-            var x = new GroupParser("https://www.facebook.com/groups/1379225572136343/members/");
+            var x = new GroupParser("https://www.facebook.com/groups/3/members/");
             x.GetEm();
 
             /*
@@ -75,17 +75,17 @@ namespace FB_Data_Analysis.Classes {
 
             x.UserHrefs.ForEach(e => {
                 if (!_visited.Contains(e)) {
-                    Print($"Getting {e}", ConsoleColor.Black);
+                    Helpers.Print($"Getting {e}", ConsoleColor.Black);
 
                     _driver.Url = e;
 
                     SaveHrefToVisited(e);
 
-                    Wait(1000, 500);
+                    Helpers.Wait(1000, 500);
 
                     GetAboutTab();
 
-                    ScrollToBottom();
+                    Helpers.ScrollToBottom();
 
                     var u = new User {Url = e};
 
@@ -93,12 +93,12 @@ namespace FB_Data_Analysis.Classes {
 
                     _nav.Perform();
 
-                    Print("\n ---- \n");
+                    Helpers.Print("\n ---- \n");
                     u.PrintUser();
                     u.Jsonise();
                 }
                 else {
-                    Print($"{e} alredy visited, skipping...", ConsoleColor.Black);
+                    Helpers.Print($"{e} alredy visited, skipping...", ConsoleColor.Black);
 
                 }
                 
@@ -106,24 +106,22 @@ namespace FB_Data_Analysis.Classes {
         }
 
         public void SingleLoop() {
-            Print("Single loop started");
-            Print("");
+            Helpers.Print("Single loop started");
+            Helpers.Print("");
 
-            
+            var e = "https://www.facebook.com/zuck";
 
             GetGroupPage();
 
-            Print($"Getting {e}", ConsoleColor.Black);
+            Helpers.Print($"Getting {e}", ConsoleColor.Black);
 
             _driver.Url = e;
 
-            Wait(1000, 500);
+            Helpers.Wait(1000, 500);
 
             GetAboutTab();
 
-            ScrollToBottom();
-            //OpenUserInNewTab();
-            //GetAboutTab();
+            Helpers.ScrollToBottom();
 
             var u = new User {Url = e};
 
@@ -138,8 +136,8 @@ namespace FB_Data_Analysis.Classes {
 
             //var checkIns = new ProfileCheckIns(u);
 
-            Print("\n ---- \n");
-            u.PrintUser();
+            Helpers.Print("\n ---- \n");
+            //u.PrintUser();
 
             u.Jsonise();
 
@@ -151,7 +149,7 @@ namespace FB_Data_Analysis.Classes {
             var buttons = row.FindElements(By.ClassName("_6-6"));
             //Wait(2000, 1000);
             buttons[1].Click();
-            Wait(1500, 500);
+            Helpers.Wait(1500, 500);
 //            var href = buttons[1].GetAttribute("href");
 //            _driver.Url = href;
             //_driver.Url = href.Count == 1 ? href[0].GetAttribute("href") : href[1].GetAttribute("href");
@@ -161,7 +159,7 @@ namespace FB_Data_Analysis.Classes {
         private void OpenUserInNewTab() {
             var nextUser = GetNextUser();
             if (nextUser == null) {
-                Print("Job Done", ConsoleColor.DarkRed);
+                Helpers.Print("Job Done", ConsoleColor.DarkRed);
                 return;
             }
 
@@ -175,7 +173,7 @@ namespace FB_Data_Analysis.Classes {
                 var userHref = profile.FindElement(By.CssSelector("a")).GetAttribute("href");
                 if (!_visited.Contains(userHref)) {
                     SaveHrefToVisited(userHref);
-                    Print($"new user found: {userHref}", ConsoleColor.Cyan);
+                    Helpers.Print($"new user found: {userHref}", ConsoleColor.Cyan);
                     _visitedProfiles += 1;
                     return userHref;
                 }
@@ -215,7 +213,7 @@ namespace FB_Data_Analysis.Classes {
         private void ScrollToLoadAllData() {
             for (var i = 0; i < _userCount / 15 + 1; i++) {
                 _driver.ExecuteScript("scrollBy(0, 2000)");
-                Wait(2000, 1000);
+                Helpers.Wait(2000, 1000);
             }
 
             _allProfiles = _driver.FindElementsByClassName("uiProfileBlockContent");
@@ -238,7 +236,7 @@ namespace FB_Data_Analysis.Classes {
                 _visited.Add(line);
             }
 
-            Print($"{lines.Length} visited profiles added to visited list");
+            Helpers.Print($"{lines.Length} visited profiles added to visited list");
 
 //            _fileName = new string(_groupUrl.Where(char.IsDigit).ToArray()) + ".dt";
 //

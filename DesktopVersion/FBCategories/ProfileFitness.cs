@@ -1,9 +1,9 @@
 ﻿using System;
-using FB_Data_Analysis.Classes.Util;
+using FB_Data_Analysis.Classes;
+using FB_Data_Analysis.DesktopVersion.Util;
 using OpenQA.Selenium;
-using static FB_Data_Analysis.Classes.Helpers;
 
-namespace FB_Data_Analysis.Classes.FBCategories {
+namespace FB_Data_Analysis.DesktopVersion.FBCategories {
     public class ProfileFitness : Extractor, IPageTab {
         
         public ProfileFitness(User user) : base(user) {
@@ -13,50 +13,41 @@ namespace FB_Data_Analysis.Classes.FBCategories {
 
             const string id = "pagelet_timeline_medley_fitness";
 
-            Print($"Scrapping {id} -> {title}", ConsoleColor.DarkRed);
+            Helpers.Print($"Scrapping {id} -> {title}", ConsoleColor.DarkRed);
 
             var container = Driver.FindElementById(id);
             
-            var butts = GetTabButtons(id);
+            var butts = Helpers.GetTabButtons(id);
             
             for (var i = 0; i < butts.Count; i++) {
                 
                 ClickButtonNav(container, i);
                 
-                ScrollToBottom();
+                Helpers.ScrollToBottom();
                 
                 CustomExtract(container);
-                Print("------------------------------ ------------------ -------------");
+                Helpers.Print("------------------------------ ------------------ -------------");
                 
-                ScrollToElement(id);
+                Helpers.ScrollToElement(id);
             }
         }
 
         private void CustomExtract(ISearchContext container) {
-            
             var elements = container.FindElements(By.CssSelector("td"));
-            foreach (var element in elements) {
+            for (var i = 0; i < elements.Count; i++) {
+                var element = elements[i];
                 var a = element.FindElement(By.CssSelector("a"));
 
                 var name = a.GetAttribute("data-appname");
                 var href = a.GetAttribute("href");
 
-                var type = ExtractTextValueFromElement(element.FindElement(By.ClassName("appCategories")), true);
+                var type = Helpers.ExtractTextValueFromElement(element.FindElement(By.ClassName("appCategories")), true);
 
                 var description = element.FindElement(By.ClassName("description")).Text;
-            
-//                User.Misc.AddData("Fitness", $"{name} | " +
-//                                             $"{type} | " +
-//                                             $"{description} | " +
-//                                             $"{href} | ");
-                User.Misc.AddData("Fitness", "Name", name);
-                User.Misc.AddData("Fitness", "Type", type);
-                User.Misc.AddData("Fitness", "Description", description);
-                User.Misc.AddData("Fitness", "Url", href);
 
+                Helpers.Print($"( {elements.Count - i} ) Adding {name}", ConsoleColor.Yellow);
+                User.Misc.AddData("Fitness", new[] {type, name, description, href});
             }
-            
-            
         }
         
         
@@ -66,15 +57,15 @@ namespace FB_Data_Analysis.Classes.FBCategories {
 
             if (navButtons.Count - 1 < buttonIndex) return;
             
-            Print($"Clicking on {navButtons[buttonIndex]?.Text}", ConsoleColor.Gray);
+            Helpers.Print($"Clicking on {navButtons[buttonIndex]?.Text}", ConsoleColor.Gray);
             
-            ScrollToElement(navButtons[buttonIndex]);
+            Helpers.ScrollToElement(navButtons[buttonIndex]);
             
-            ScrollUpSome();
+            Helpers.ScrollUpSome();
             
             navButtons[buttonIndex].Click();
             
-            Wait(1000, 200);
+            Helpers.Wait(1000, 200);
         }
 
     }

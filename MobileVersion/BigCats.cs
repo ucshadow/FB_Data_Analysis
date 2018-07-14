@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using FB_Data_Analysis.Classes;
+using FB_Data_Analysis.DesktopVersion.Models;
 using FB_Data_Analysis.MobileVersion.MFBCategories;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -225,6 +226,44 @@ namespace FB_Data_Analysis.MobileVersion {
             Print($"Added {rows.Count} in {stop.Elapsed}");
             
             //CloseAndSwitchToMainTab();
+        }
+        
+        public static List<string[]> GetFriends(string url) {
+            Print("Getting Friends", ConsoleColor.Yellow);
+            
+            OpenNewTabAndFocus();
+            var li = new List<string[]>();
+            
+            Driver.Url = url;
+            Wait(1000, 500);
+            ScrollToBottom(1000);
+            
+            var rows = Driver.FindElementsByClassName("_5pxb");
+
+            var stop = Stopwatch.StartNew();
+
+            for (var index = 0; index < rows.Count; index++) {
+                var row = rows[index];
+                var f = new string[3];
+
+                var a = row.FindElement(By.TagName("a"));
+
+                var name = a.Text;
+                var workPlace = row.FindElement(By.ClassName("_30yn")).Text;
+                var href = a.GetAttribute("href");
+
+                f[0] = name;
+                f[1] = workPlace;
+                f[2] = href;
+
+                Print($"( {rows.Count - index} ) Adding friend {name}", ConsoleColor.Green);
+                li.Add(f);
+            }
+
+            //stop.Stop();
+            //Print($"Added {rows.Count} in {stop.Elapsed}");
+            CloseAndSwitchToMainTab();
+            return li;
         }
 
         private static string RemoveNumbers(string s) {

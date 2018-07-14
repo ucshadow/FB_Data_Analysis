@@ -1,17 +1,16 @@
 ﻿using System;
 using System.IO;
-using FB_Data_Analysis.Classes.Util;
-using static FB_Data_Analysis.Classes.Helpers;
+using FB_Data_Analysis.Classes;
+using FB_Data_Analysis.DesktopVersion.Util;
 
-namespace FB_Data_Analysis.Classes.FBCategories {
+namespace FB_Data_Analysis.DesktopVersion.FBCategories {
     public class ProfileDummy : Extractor, IPageTab {
         
         public ProfileDummy(User user) : base(user) {}
 
         public void Scrap(string title) {
-            Print($"Dummy profile {title}", ConsoleColor.Red);
-            Console.Beep(5000, 5000);
-            WriteLog(title);
+            Helpers.Print($"Dummy profile {title}", ConsoleColor.Red);
+            //WriteLog(title);
         }
 
         private void WriteLog(string title) {

@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Drawing;
 using System.Globalization;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
+using FB_Data_Analysis.Classes;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using static FB_Data_Analysis.Classes.Helpers;
 
-namespace FB_Data_Analysis.Classes.FBCategories {
+namespace FB_Data_Analysis.DesktopVersion.FBCategories {
     public class ProfileAbout : IPageTab {
         private readonly ChromeDriver _driver;
         private User _user;
@@ -23,15 +19,15 @@ namespace FB_Data_Analysis.Classes.FBCategories {
 
         public void Scrap(string title) {
             
-            if (!TabIsPresent("About")) return;
+            if (!Helpers.TabIsPresent("About")) return;
             
-            Print($"Scrapping -> {title}", ConsoleColor.DarkRed);
+            Helpers.Print($"Scrapping -> {title}", ConsoleColor.DarkRed);
 
-            ScrollToBottom();
+            Helpers.ScrollToBottom();
 
             //_driver.ExecuteScript("scrollBy(0,-document.body.scrollHeight)");
 
-            ScrollToElement("pagelet_timeline_medley_about");
+            Helpers.ScrollToElement("pagelet_timeline_medley_about");
             
             var tabList = _driver.FindElementsByClassName("_47_-");
 
@@ -64,7 +60,7 @@ namespace FB_Data_Analysis.Classes.FBCategories {
             // all fields in the specific tab.
             
             tabs[index].Click();
-            Wait(2000, 200);
+            Helpers.Wait(2000, 200);
             
             // _4qm1
             var allFields = _driver.FindElementsByClassName(_tabClass);
@@ -86,12 +82,12 @@ namespace FB_Data_Analysis.Classes.FBCategories {
         private void GetTitle(ISearchContext element, string term, int index) {
             var title = element.FindElement(By.ClassName("_h72")).Text.ToLower();
                 
-            Print($"Found title: {title}");
+            Helpers.Print($"Found title: {title}");
             
             var pascalCategoryName = Regex.Replace(term, @"\s+", "");
             var info = CultureInfo.CurrentCulture.TextInfo;
             var pascalAttributeName = info.ToTitleCase(title.ToLower()).Replace(" ", string.Empty);
-            Print($"Pascaled {title} into {pascalAttributeName}");
+            Helpers.Print($"Pascaled {title} into {pascalAttributeName}");
             
             GetExperiencesTabs(element, index, pascalCategoryName, pascalAttributeName);
                 
@@ -144,7 +140,7 @@ namespace FB_Data_Analysis.Classes.FBCategories {
         private void GetLifeEvents(ISearchContext element, 
             string pascalCategoryName, string pascalAttributeName) {
             
-            Print($"Getting row data for {pascalCategoryName} known as attribute {pascalAttributeName}", ConsoleColor.DarkBlue);
+            Helpers.Print($"Getting row data for {pascalCategoryName} known as attribute {pascalAttributeName}", ConsoleColor.DarkBlue);
 
             var allRows = element.FindElements(By.ClassName("_ikh"));
 
@@ -155,9 +151,9 @@ namespace FB_Data_Analysis.Classes.FBCategories {
             for (var index = 0; index < allRows.Count; index++) {
                 var year = allRows[index].FindElement(By.ClassName("_50f8"));
                 var webElement = allRows[index];
-                var value = ExtractTextValueFromElement(webElement, true);
+                var value = Helpers.ExtractTextValueFromElement(webElement, true);
 
-                Print($"Found key {pascalAttributeName} and value {value}", ConsoleColor.DarkCyan);
+                Helpers.Print($"Found key {pascalAttributeName} and value {value}", ConsoleColor.DarkCyan);
                 _user.About.AddData(pascalAttributeName, $"{index}_{pascalCategoryName}", $"{year.Text}: {value}");
             }
         }
@@ -166,7 +162,7 @@ namespace FB_Data_Analysis.Classes.FBCategories {
         private void GetFamilyAndDetails(ISearchContext element, 
             string pascalCategoryName, string pascalAttributeName) {
             
-            Print($"Getting row data for {pascalCategoryName} known as attribute {pascalAttributeName}", ConsoleColor.DarkBlue);
+            Helpers.Print($"Getting row data for {pascalCategoryName} known as attribute {pascalAttributeName}", ConsoleColor.DarkBlue);
 
             var allRows = element.FindElements(By.ClassName("_4bl9"));
 
@@ -178,9 +174,9 @@ namespace FB_Data_Analysis.Classes.FBCategories {
         private void ScrapFamAndDet(IReadOnlyList<IWebElement> allRows, string pascalAttributeName, string pascalCategoryName) {
             for (var index = 0; index < allRows.Count; index++) {
                 var webElement = allRows[index];
-                var value = ExtractTextValueFromElement(webElement, true);
+                var value = Helpers.ExtractTextValueFromElement(webElement, true);
 
-                Print($"Found key {pascalAttributeName} and value {value}", ConsoleColor.DarkCyan);
+                Helpers.Print($"Found key {pascalAttributeName} and value {value}", ConsoleColor.DarkCyan);
                 _user.About.AddData(pascalAttributeName, $"{index}_{pascalCategoryName}", value);
             }
         }
@@ -196,7 +192,7 @@ namespace FB_Data_Analysis.Classes.FBCategories {
         private void GetContactAndBasicInfo(ISearchContext element, 
             string pascalCategoryName, string pascalAttributeName) {
             
-            Print($"Getting row data for {pascalCategoryName} known as attribute {pascalAttributeName}", ConsoleColor.DarkBlue);
+            Helpers.Print($"Getting row data for {pascalCategoryName} known as attribute {pascalAttributeName}", ConsoleColor.DarkBlue);
 
             var allRows = element.FindElements(By.ClassName("_ikh"));
             
@@ -205,9 +201,9 @@ namespace FB_Data_Analysis.Classes.FBCategories {
                 var value = webElement.FindElement(By.ClassName("_pt5"));
 
                 var keyText = key.Text;
-                var valueText = ExtractTextValueFromElement(value, false); // dont scrap divs, only spans and hrefs
+                var valueText = Helpers.ExtractTextValueFromElement(value, false); // dont scrap divs, only spans and hrefs
                 
-                Print($"Found key {keyText} and value {valueText}", ConsoleColor.DarkCyan);
+                Helpers.Print($"Found key {keyText} and value {valueText}", ConsoleColor.DarkCyan);
 
                 if (keyText.Length > 0) {
                     _user.About.AddData(pascalAttributeName, keyText, valueText);
@@ -224,7 +220,7 @@ namespace FB_Data_Analysis.Classes.FBCategories {
         private void GetExperienceTabRows1And2(ISearchContext element, 
             string pascalCategoryName, string pascalAttributeName) {
             
-            Print($"Getting row data for {pascalCategoryName} known as attribute {pascalAttributeName}", ConsoleColor.DarkBlue);
+            Helpers.Print($"Getting row data for {pascalCategoryName} known as attribute {pascalAttributeName}", ConsoleColor.DarkBlue);
             
             var fields = element.FindElements(By.ClassName("_42ef"));
 
@@ -233,7 +229,7 @@ namespace FB_Data_Analysis.Classes.FBCategories {
                 var elementUrlTitle = GetElementUrl(webElement);
                 var elementSubtitle = GetElementSubtitle(webElement);
 
-                Print($"Found title {elementUrlTitle?.Text} and subtitle {elementSubtitle?.Text}", ConsoleColor.Cyan);
+                Helpers.Print($"Found title {elementUrlTitle?.Text} and subtitle {elementSubtitle?.Text}", ConsoleColor.Cyan);
 
                 if (elementSubtitle?.Text.Length > 0) {
                     _user.About.AddData(pascalAttributeName, $"{index}_" + elementUrlTitle?.Text, elementSubtitle?.Text);
@@ -247,19 +243,19 @@ namespace FB_Data_Analysis.Classes.FBCategories {
 
         private IWebElement GetElementUrl(ISearchContext webElement) {
 
-            if (ElementIsPresent(webElement, By.CssSelector("a"))) {
+            if (Helpers.ElementIsPresent(webElement, By.CssSelector("a"))) {
                 return webElement.FindElement(By.CssSelector("a"));
             }
-            Print($"warning !!! {webElement} has no url", ConsoleColor.DarkRed);
+            Helpers.Print($"warning !!! {webElement} has no url", ConsoleColor.DarkRed);
             return null;
         }
         
         private IWebElement GetElementSubtitle(ISearchContext webElement) {
 
-            if (ElementIsPresent(webElement, By.ClassName("fsm"))) {
+            if (Helpers.ElementIsPresent(webElement, By.ClassName("fsm"))) {
                 return webElement.FindElement(By.ClassName("fsm"));
             }
-            Print($"{webElement} has no subtitle.", ConsoleColor.DarkRed);
+            Helpers.Print($"{webElement} has no subtitle.", ConsoleColor.DarkRed);
             return null;
         }
         

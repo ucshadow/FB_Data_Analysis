@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
+using FB_Data_Analysis.Classes;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using static FB_Data_Analysis.Classes.Helpers;
 
-namespace FB_Data_Analysis.Classes.Util {
+namespace FB_Data_Analysis.DesktopVersion.Util {
     public class Extractor {
         protected readonly ChromeDriver Driver;
         protected readonly User User;
@@ -16,7 +16,7 @@ namespace FB_Data_Analysis.Classes.Util {
             User = user;
         }
 
-        protected void Extract(string type, string miscCategoryName, string tabId, string title) {
+        private void Extract(string type, string miscCategoryName, string tabId, string title) {
             var d = Driver.FindElementById(tabId);
             GetFieldAndLink(d, type, miscCategoryName, title);
         }
@@ -26,15 +26,15 @@ namespace FB_Data_Analysis.Classes.Util {
             
             if (navButtons.Count - 1 < buttonIndex) return;
             
-            Print($"Clicking on {navButtons[buttonIndex]?.Text}", ConsoleColor.Gray);
+            Helpers.Print($"Clicking on {navButtons[buttonIndex]?.Text}", ConsoleColor.Gray);
             
-            ScrollToElement(navButtons[buttonIndex]);
+            Helpers.ScrollToElement(navButtons[buttonIndex]);
             
-            ScrollUpSome();
+            Helpers.ScrollUpSome();
             
             navButtons[buttonIndex].Click();
             
-            Wait(1000, 200);
+            Helpers.Wait(1000, 200);
         }
 
         private void GetFieldAndLink(ISearchContext element, string type, string miscCategoryName, string title) {
@@ -44,24 +44,21 @@ namespace FB_Data_Analysis.Classes.Util {
                 var row = webElement.FindElement(By.ClassName("_gx7"));
                 var key = row?.Text;
                 var value = row?.GetAttribute("href");
-                //Print($"[{type}] {key}: {value}", ConsoleColor.DarkGreen);
-                if (key?.Trim().Length == 0) key = $"{title}_{i}";
-                //User.Misc.AddData(miscCategoryName, $"[{type}] {key} -> {value}");
-                User.Misc.AddData(miscCategoryName, "Type", type);
-                User.Misc.AddData(miscCategoryName, "Name", key);
-                User.Misc.AddData(miscCategoryName, "Url", value);
+                if (!(key?.Trim().Length > 0)) continue;
+                Helpers.Print($"( {dataBoxes.Count - i} )Adding {title}", ConsoleColor.Yellow);
+                User.Misc.AddData(miscCategoryName, new[] {type, key, value});
             }
         }
 
-        public void Scrap(string title, string id, string name) {
+        protected void Scrap(string title, string id, string name) {
             
-            Print($"Scrapping {name} -> {title}", ConsoleColor.DarkRed);
+            Helpers.Print($"Scrapping {name} -> {title}", ConsoleColor.DarkRed);
             
             //Driver.Url = url;
 
-            Wait(1000, 200);
+            Helpers.Wait(1000, 200);
 
-            var butts = GetTabButtons(id);
+            var butts = Helpers.GetTabButtons(id);
 
             for (var i = 0; i < butts.Count; i++) {
                 var webElement = butts[i];
@@ -75,12 +72,12 @@ namespace FB_Data_Analysis.Classes.Util {
                 
                 ClickNavBarButton(i, SeleniumProvider.Driver.FindElementById(id));
                 
-                ScrollToBottom();
+                Helpers.ScrollToBottom();
                 
                 Extract(webElement.Text, name, id, title);
-                Print("------------------------------ ------------------ -------------");
+                Helpers.Print("------------------------------ ------------------ -------------");
                 
-                ScrollToElement(id);
+                Helpers.ScrollToElement(id);
             }
         }
 
@@ -96,51 +93,40 @@ namespace FB_Data_Analysis.Classes.Util {
             var allMovies = Driver.
                 FindElementsByXPath($"//div[@id='{tabId}']//div[@class='_gx6 _agv']");
 
-            foreach (var webElement in allMovies) {
-                var name = webElement.FindElement(By.CssSelector("a"))?.Text;
+            for (var i = 0; i < allMovies.Count; i++) {
+                
+                var name = allMovies[i].FindElement(By.CssSelector("a"))?.Text;
                 var subText = "";
-                var timed = false;
 
                 if (type == "Watched" || type == "Read") {
-                    subText = webElement.FindElement(By.ClassName("timestampContent"))?.Text;
-                    timed = true;
-                }
-
-                var qq = timed ? "time -> " : "";
-                
-                //var likes = webElement.FindElements(By.XPath("//span[@class='_14a_']//span"))[1]?.Text;
-                
-                //Print($"{type}: {name} {qq} {subText}");
-                
-                //User.Misc.AddData(miscCategoryName, $"[{type}] {name} {qq} {subText}");
-                User.Misc.AddData(miscCategoryName, "Type", type);
-                User.Misc.AddData(miscCategoryName, "Name", name);
-                User.Misc.AddData(miscCategoryName, "Time", qq);
-                User.Misc.AddData(miscCategoryName, "Subtext", subText);
+                    subText = allMovies[i].FindElement(By.ClassName("timestampContent"))?.Text;
+                }                
+                Helpers.Print($"( {allMovies.Count - i} ) Adding {name}", ConsoleColor.Yellow);
+                User.Misc.AddData(miscCategoryName, new[]{type, name, subText});
             }
         }
 
-        public void GeneralScrap(string title, string id) {
+        protected void GeneralScrap(string title, string id) {
 
-            Print($"Scrapping -> {title}", ConsoleColor.DarkRed);
+            Helpers.Print($"Scrapping -> {title}", ConsoleColor.DarkRed);
 
             //Driver.Url = url;
 
-            Wait(1000, 200);
+            Helpers.Wait(1000, 200);
 
-            var butts = GetTabButtons(id);
+            var butts = Helpers.GetTabButtons(id);
 
             for (var i = 0; i < butts.Count; i++) {
                 var webElement = butts[i];
                 ClickNavBarButton(i, SeleniumProvider.Driver.FindElementById(id));
 
-                ScrollToBottom();
+                Helpers.ScrollToBottom();
 
                 CustomMoviesExtract(webElement.Text, title, id);
                 //Extract(webElement.Text, "Music", id);
-                Print("------------------------------ ------------------ -------------");
+                Helpers.Print("------------------------------ ------------------ -------------");
 
-                ScrollToElement(id);
+                Helpers.ScrollToElement(id);
             }
         }
     }

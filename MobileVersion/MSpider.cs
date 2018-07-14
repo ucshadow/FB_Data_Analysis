@@ -33,9 +33,7 @@ namespace FB_Data_Analysis.MobileVersion {
 
             GoToPageAndLogin(email, password);
             
-//            var url = "https://m.facebook.com/zuck/about";
-
-            var url = "https://m.facebook.com/CristinaUngurean97/about";
+            var url = "https://m.facebook.com/zuck/about";
             profileData.Url = url;
             
             _driver.Url = url;

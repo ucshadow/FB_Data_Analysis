@@ -284,8 +284,9 @@ namespace FB_Data_Analysis.Classes {
                                   "a.target='_blank';" +
                                   "a.href='"+ "about:blank" + "';" +
                                   "a.innerHTML='dhkasjhdksahdkash';" +
+                                  "var parent = d.getElementById('globalContainer') || d.getElementById('viewport');" + 
                                   //"x.appendChild(a)" +
-                                  "d.getElementById('viewport').appendChild(a);";
+                                  "parent.appendChild(a);";
             // Execute the JavaScript
             SeleniumProvider.Driver.ExecuteScript(script);
             // Click the new element
