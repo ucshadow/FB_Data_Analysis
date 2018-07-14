@@ -28,8 +28,9 @@ namespace FB_Data_Analysis.Classes.FBCategories {
                 var link = container?.GetAttribute("href");
                 var name = container?.Text;
                 var type = element.FindElement(By.ClassName("fsm"))?.Text;
-                    
-                User.Misc.AddData("Likes", $"[{type}] {name}: {link}");
+                  
+                // todo: add likes mobile or desktop.
+                //User.Misc.AddData("Likes", $"[{type}] {name}: {link}");
             }
         }
         

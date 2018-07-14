@@ -57,7 +57,7 @@ namespace FB_Data_Analysis.Classes {
         public void MainLoop() {
             GlobalDelay = 2000;
 
-            //SingleLoop();
+            SingleLoop();
 
             Print("Main loop started");
             Print("");
@@ -109,7 +109,7 @@ namespace FB_Data_Analysis.Classes {
             Print("Single loop started");
             Print("");
 
-            var e = "https://www.facebook.com/cornea.costea";
+            
 
             GetGroupPage();
 

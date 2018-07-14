@@ -45,11 +45,15 @@ namespace FB_Data_Analysis.Classes.FBCategories {
 
                 var description = element.FindElement(By.ClassName("description")).Text;
             
-                User.Misc.AddData("Fitness", $"{name} | " +
-                                             $"{type} | " +
-                                             $"{description} | " +
-                                             $"{href} | ");
-                
+//                User.Misc.AddData("Fitness", $"{name} | " +
+//                                             $"{type} | " +
+//                                             $"{description} | " +
+//                                             $"{href} | ");
+                User.Misc.AddData("Fitness", "Name", name);
+                User.Misc.AddData("Fitness", "Type", type);
+                User.Misc.AddData("Fitness", "Description", description);
+                User.Misc.AddData("Fitness", "Url", href);
+
             }
             
             

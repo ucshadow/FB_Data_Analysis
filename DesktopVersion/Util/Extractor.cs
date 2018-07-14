@@ -46,7 +46,10 @@ namespace FB_Data_Analysis.Classes.Util {
                 var value = row?.GetAttribute("href");
                 //Print($"[{type}] {key}: {value}", ConsoleColor.DarkGreen);
                 if (key?.Trim().Length == 0) key = $"{title}_{i}";
-                User.Misc.AddData(miscCategoryName, $"[{type}] {key} -> {value}");
+                //User.Misc.AddData(miscCategoryName, $"[{type}] {key} -> {value}");
+                User.Misc.AddData(miscCategoryName, "Type", type);
+                User.Misc.AddData(miscCategoryName, "Name", key);
+                User.Misc.AddData(miscCategoryName, "Url", value);
             }
         }
 
@@ -109,7 +112,11 @@ namespace FB_Data_Analysis.Classes.Util {
                 
                 //Print($"{type}: {name} {qq} {subText}");
                 
-                User.Misc.AddData(miscCategoryName, $"[{type}] {name} {qq} {subText}");
+                //User.Misc.AddData(miscCategoryName, $"[{type}] {name} {qq} {subText}");
+                User.Misc.AddData(miscCategoryName, "Type", type);
+                User.Misc.AddData(miscCategoryName, "Name", name);
+                User.Misc.AddData(miscCategoryName, "Time", qq);
+                User.Misc.AddData(miscCategoryName, "Subtext", subText);
             }
         }
 

@@ -7,6 +7,7 @@ using FB_Data_Analysis.MobileVersion.MFBCategories;
 using Newtonsoft.Json;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Interactions;
 using static FB_Data_Analysis.Classes.Helpers;
 
 namespace FB_Data_Analysis.MobileVersion {
@@ -26,13 +27,21 @@ namespace FB_Data_Analysis.MobileVersion {
         public void SingleUSerTest(string email, string password) {
             var profileData = new GenericProfileData();
 
+            var a = new Actions(_driver);
+            
+            _driver.Url = "https://m.facebook.com/";
+
             GoToPageAndLogin(email, password);
             
-            var url = "https://m.facebook.com/zuck/about";
+//            var url = "https://m.facebook.com/zuck/about";
 
+            var url = "https://m.facebook.com/CristinaUngurean97/about";
+            profileData.Url = url;
+            
             _driver.Url = url;
             Wait(2000, 1000);
-
+            ScrollToBottom();
+            
 
             //GetWork(profileData);
             //GetEducation(profileData);
@@ -42,8 +51,58 @@ namespace FB_Data_Analysis.MobileVersion {
             //GetContactInfo(profileData);
             //GetBasicInfo(profileData);
             
-            GetFamilyMembers(profileData);
+            //GetFamilyMembers(profileData);
+            
+            //GetLifeEvents(profileData);
+//            GetFavoriteQuotes(profileData);
+            //GetInterestedIn(profileData);
+            
+            BigCats.GetBigCats(profileData);
             Jsonise(profileData);
+        }
+
+        
+        
+        private void GetInterestedIn(GenericProfileData profileData) {
+            Print($"Getting rows", ConsoleColor.Blue);
+            var row = _driver.FindElementsByXPath("//div[@id='interested-in']//div[@class='_5cds _2lcw']");
+            if (row.Count <= 0) return;
+            profileData.AddData("InteresedIn", new InterestedIn(){Interested = row[0].Text});
+        }
+
+        private void GetFavoriteQuotes(GenericProfileData profileData) {
+            Print($"Getting rows", ConsoleColor.Blue);
+            var row = _driver.FindElementsByXPath("//div[@id='quote']//div[@class='_5cds _2lcw _5cdt']");
+            if (row.Count <= 0) return;
+            profileData.AddData("Qoutes", new FavoriteQuotes(){Quote = row[0].Text});
+        }
+
+        private void GetLifeEvents(GenericProfileData profileData) {
+            
+            // check if the expand button is present
+            var but = _driver.FindElementsByXPath("//div[@id='year-overviews']//div[@class='_49tq']");
+            if (but.Count > 0) {
+                Print($"Found expand button", ConsoleColor.DarkBlue);
+                ScrollToElement("year-overviews");
+                but[0].Click();
+                Wait(1000, 500);
+            }
+
+            var rows = _driver.FindElementsByXPath("//div[@id='year-overviews']//div[@class='_3-9b _3-92 _3-97']");
+            Print($"Getting rows, Count = {rows.Count}", ConsoleColor.Blue);
+
+            var lifeEvents = new LifeEvents();
+            
+            foreach (var row in rows) {
+                var key = ElementIsPresent(row, By.ClassName("_3-8x"), true)?.Text;
+                var subs = row.FindElements(By.ClassName("_2pis"));
+                foreach (var sub in subs) {
+                    var data = sub?.Text;
+                    lifeEvents.AddData(key, data);
+                    Print($"Adding year {key}, event {data}", ConsoleColor.DarkGreen);
+                }
+            }
+            profileData.AddData("LifeEvents", lifeEvents);
         }
 
         private void GetFamilyMembers(GenericProfileData profileData) {

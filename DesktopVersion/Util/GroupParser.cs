@@ -25,7 +25,7 @@ namespace FB_Data_Analysis.Classes.Util {
             
             var watch = StartNew();
             
-            ScrollToBottom(500, 250);
+            ScrollToBottom(500);
 
             var container = _driver.FindElementById("groupsMemberSection_recently_joined");
 

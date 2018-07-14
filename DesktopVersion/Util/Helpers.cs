@@ -12,9 +12,8 @@ using static System.Diagnostics.Stopwatch;
 
 namespace FB_Data_Analysis.Classes {
     public static class Helpers {
-
         public static int GlobalDelay = 1500;
-        
+
         public static void Wait(double delay, double interval) {
             // Causes the WebDriver to wait for at least a fixed delay
             var now = DateTime.Now;
@@ -54,7 +53,7 @@ namespace FB_Data_Analysis.Classes {
             ForegroundColor = textColor;
 
             var spaced = CalculateDistance($"[ {cName}: {methodName} ]");
-            
+
             var t = DateTime.Now;
             var h = t.Hour < 10 ? $"0{t.Hour}" : $"{t.Hour}";
             var m = t.Minute < 10 ? $"0{t.Minute}" : $"{t.Minute}";
@@ -69,12 +68,12 @@ namespace FB_Data_Analysis.Classes {
             var all = element.FindElements(by);
             return all.Count > 0;
         }
-        
+
         public static IWebElement ElementIsPresent(ISearchContext element, By by, bool get) {
             var all = element.FindElements(by);
             return all.Count > 0 ? all[0] : null;
         }
-        
+
         public static ReadOnlyCollection<IWebElement> ElementIsPresent(ISearchContext element, By by, int get) {
             var all = element.FindElements(by);
             return all;
@@ -152,14 +151,14 @@ namespace FB_Data_Analysis.Classes {
             action.Perform();
             Wait(1000, 500);
         }
-        
+
         public static void ScrollToElement(IWebElement element) {
             var action = new Actions(SeleniumProvider.Driver);
             action.MoveToElement(element);
             action.Perform();
             Wait(1000, 500);
         }
-        
+
         public static void ScrollToElement(string elementId) {
             SeleniumProvider.Driver.ExecuteScript($"document.getElementById('{elementId}').scrollIntoView()");
             Wait(1000, 500);
@@ -180,10 +179,10 @@ namespace FB_Data_Analysis.Classes {
 
         public static void ScrollToBottom() {
             var driver = SeleniumProvider.Driver;
-            
+
             var body = driver.FindElement(By.CssSelector("body"));
             var curHeight = driver.ExecuteScript("return document.body.scrollHeight + ''");
-            
+
             while (true) {
                 body.SendKeys(Keys.PageDown);
                 Wait(GlobalDelay, 500);
@@ -191,43 +190,45 @@ namespace FB_Data_Analysis.Classes {
 
                 int.TryParse((string) q, out var a);
                 int.TryParse((string) curHeight, out var b);
-                
+
                 if (a == b) {
                     return;
                 }
+
                 curHeight = q;
             }
         }
-        
-        public static void ScrollToBottom(int milisecondsInterval, int maxTimeInSeconds) {
 
+        public static void ScrollToBottom(int milisecondsInterval) {
             var watch = StartNew();
 
             var driver = SeleniumProvider.Driver;
-            
+
             var body = driver.FindElement(By.CssSelector("body"));
             var curHeight = driver.ExecuteScript("return document.body.scrollHeight + ''");
-            
+
             while (true) {
+                body.SendKeys(Keys.PageDown);
+                body.SendKeys(Keys.PageDown);
+                body.SendKeys(Keys.PageDown);
                 body.SendKeys(Keys.PageDown);
                 Wait(milisecondsInterval, 100);
                 var q = driver.ExecuteScript("return document.body.scrollHeight + ''");
 
                 int.TryParse((string) q, out var a);
                 int.TryParse((string) curHeight, out var b);
-                
-                
+
+
 //                if (watch.ElapsedMilliseconds > 1000 * maxTimeInSeconds) {
 //                    watch.Stop();
 //                    Print($"Limit {maxTimeInSeconds} reached {watch.ElapsedMilliseconds / 1000}, stopping...");
 //                    return;
 //                }
-                
+
                 if (a == b) {
-                    
                     // double check with delay
                     Wait(2000, 1000);
-                    
+
                     var q2 = driver.ExecuteScript("return document.body.scrollHeight + ''");
                     int.TryParse((string) q2, out var a2);
                     int.TryParse((string) curHeight, out var b2);
@@ -235,12 +236,14 @@ namespace FB_Data_Analysis.Classes {
                     if (a2 == b2) {
                         watch.Stop();
                         Print($"Done in {watch.ElapsedMilliseconds / 1000} seconds");
-                    
+
                         return;
                     }
+
                     Print($"Fake done detecked, scrolling...", ConsoleColor.Magenta);
                     //ScrollToBottom(milisecondsInterval);
                 }
+
                 curHeight = q;
             }
         }
@@ -249,7 +252,7 @@ namespace FB_Data_Analysis.Classes {
             //var element = SeleniumProvider.Driver.FindElementById(elementId);
             SeleniumProvider.Driver.FindElement(By.XPath($"//div[@id='{elementId}']//a[@class='_3t3']")).Click();
         }
-        
+
         public static void GoBackToAbout() {
             var but = SeleniumProvider.Driver.FindElementsByClassName("_6-6")[1];
             ScrollToElement("fbProfileCover");
@@ -264,21 +267,50 @@ namespace FB_Data_Analysis.Classes {
                     return true;
                 }
             }
+
             return false;
         }
-        
+
         public static void OpenNewTabAndFocus() {
-            SeleniumProvider.Driver.ExecuteScript("window.open('about:blank', '-blank')");
-            var tabs = SeleniumProvider.Driver.WindowHandles;
-            SeleniumProvider.Driver.SwitchTo().Window(tabs[1]);
+//            SeleniumProvider.Driver.ExecuteScript("window.open('about:blank', '-blank')");
+//            Wait(500, 100);
+//            var tabs = SeleniumProvider.Driver.WindowHandles;
+//            SeleniumProvider.Driver.SwitchTo().Window(tabs.Last());
+            
+            const string script = "var d=document;" +
+                                  //"var x = d.createElement('div');" +
+                                  "var a = d.createElement('a');" +
+                                  "a.id='clickid12';" +
+                                  "a.target='_blank';" +
+                                  "a.href='"+ "about:blank" + "';" +
+                                  "a.innerHTML='dhkasjhdksahdkash';" +
+                                  //"x.appendChild(a)" +
+                                  "d.getElementById('viewport').appendChild(a);";
+            // Execute the JavaScript
+            SeleniumProvider.Driver.ExecuteScript(script);
+            // Click the new element
+            Wait(1000, 100);
+            SeleniumProvider.Driver.FindElementById("clickid12").Click();
+            // Switch to the new tab
+            SeleniumProvider.Driver.SwitchTo().Window(SeleniumProvider.Driver.WindowHandles.Last());
+                
+                
+            Wait(200, 100);
         }
 
         public static void FocusMainTab() {
-            SeleniumProvider.Driver.SwitchTo().Window(SeleniumProvider.Driver.WindowHandles[0]);
+            var tabs = SeleniumProvider.Driver.WindowHandles;
+            SeleniumProvider.Driver.SwitchTo().Window(tabs.First());
         }
 
         public static void CloseTab() {
             SeleniumProvider.Driver.Close();
+            //SeleniumProvider.Driver.ExecuteScript("window.close()");
+        }
+
+        public static void CloseAndSwitchToMainTab() {
+            CloseTab();
+            FocusMainTab();
         }
 
         public static ReadOnlyCollection<IWebElement> GetTabButtons(string tabId) {
@@ -301,14 +333,14 @@ namespace FB_Data_Analysis.Classes {
 
             var allPresent = SeleniumProvider.Driver.FindElements(By
                 .XPath("//div[contains(@id, 'pagelet_timeline_medley')]"));
-            
+
             foreach (var webElement in allPresent) {
                 var actualId = webElement.GetAttribute("id");
-                
+
                 // if the current web element has a cat in it's id
                 if (!cats.Any(e => actualId.Contains(e))) continue;
                 // check if it has a See All button
-                
+
                 // ToDO: change from hard coded ID !!!!!!!!!!!!!!!!!!!!!
                 var but = SeleniumProvider.Driver
                     .FindElementsByXPath("//div[@id='pagelet_timeline_medley_movies']//span[@class='_3t5 fwb']");
@@ -317,8 +349,8 @@ namespace FB_Data_Analysis.Classes {
                 but[0].Click();
                 return;
             }
+
             Print("No more cats", ConsoleColor.Magenta);
-            
         }
     }
 }

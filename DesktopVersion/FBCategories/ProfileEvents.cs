@@ -28,9 +28,12 @@ namespace FB_Data_Analysis.Classes.FBCategories {
                 
                 Print($"name {name}, time {time}, href {href}", ConsoleColor.Yellow);
                 
-                User.Misc.AddData("Events", $"{name} | " +
-                                            $"{time} | " +
-                                            $"{href} | ");
+//                User.Misc.AddData("Events", $"{name} | " +
+//                                            $"{time} | " +
+//                                            $"{href} | ");
+                User.Misc.AddData("Events", "Name", name);
+                User.Misc.AddData("Events", "Time", time);
+                User.Misc.AddData("Events", "Href", href);
             }
         }
         

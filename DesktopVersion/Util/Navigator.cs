@@ -20,10 +20,10 @@ namespace FB_Data_Analysis.Classes {
         private List<string> _alreadyVisited;
         
         private readonly string[] _cats = {
-            "map", "sports", "music", "movies", "tv", "books" ,"likes", "reviews",
+            "map", "sports", "music", "movies", "tv", "books" , /*"likes",*/ "reviews",
             "events", "games", "fitness",
             // undiscovered
-            "groups", "events"
+            //"groups", "events"
         };
 
         public Navigator(User user) {
@@ -101,7 +101,7 @@ namespace FB_Data_Analysis.Classes {
                         Print("Likes detected, scrolling faster...", ConsoleColor.Red);
                         
                         // scroll faster for likes, this can take a while
-                        ScrollToBottom(500, 60 * 10);
+                        ScrollToBottom(500);
                     }
                     else {
                         ScrollToBottom();

@@ -41,12 +41,17 @@ namespace FB_Data_Analysis.Classes.FBCategories {
 //                Print($"Name {name}, href {href}, rating {rating} timestamp {timeStamp}, text {ratingText}"
 //                    , ConsoleColor.Yellow);
                 
-                User.Misc.AddData("Reviews", $"{name} | " +
-                                             $"{href} | " +
-                                             $"{rating} | " +
-                                             $"{timeStamp} | " +
-                                             $"{ratingText}");
-                
+//                User.Misc.AddData("Reviews", $"{name} | " +
+//                                             $"{href} | " +
+//                                             $"{rating} | " +
+//                                             $"{timeStamp} | " +
+//                                             $"{ratingText}");
+                User.Misc.AddData("Reviews", "Name", name);
+                User.Misc.AddData("Reviews", "Url", href);
+                User.Misc.AddData("Reviews", "Rating", rating);
+                User.Misc.AddData("Reviews", "Timestamp", timeStamp);
+                User.Misc.AddData("Reviews", "Text", ratingText);
+
             }
         }
 

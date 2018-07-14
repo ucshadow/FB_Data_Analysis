@@ -7,7 +7,7 @@ namespace FB_Data_Analysis.MobileVersion {
     public class GenericProfileData {
         
         public Dictionary<string, List<IProfileField>> Data;
-        
+        public string Url;
 
         public GenericProfileData() {
             Data = new Dictionary<string, List<IProfileField>>();
