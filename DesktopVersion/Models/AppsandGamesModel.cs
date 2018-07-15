@@ -3,7 +3,7 @@ using FB_Data_Analysis.Classes.UserFields;
 using static FB_Data_Analysis.Classes.Helpers;
 
 namespace FB_Data_Analysis.DesktopVersion.Models {
-    public class GamesModel : IProfileField {
+    public class AppsandGamesModel : IProfileField {
 
         public string Type;
         public string Name;

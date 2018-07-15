@@ -1,83 +1,108 @@
 ﻿using System;
 using System.Collections.Generic;
-using static FB_Data_Analysis.Classes.Helpers;
+using System.Text.RegularExpressions;
+using FB_Data_Analysis.Classes;
+using FB_Data_Analysis.Classes.UserFields;
 
-namespace FB_Data_Analysis.Classes.UserFields {
+namespace FB_Data_Analysis.DesktopVersion.UserFields {
     public class AboutClass {
-        public object this[string propertyName] {
-            get => GetType().GetProperty(propertyName).GetValue(this, null);
-            set => GetType().GetProperty(propertyName).SetValue(this, value, null);
-        }
 
-        public Dictionary<string, string> Work { get; set; }
-        public Dictionary<string, string> ProfessionalSkills { get; set; }
-        public Dictionary<string, string> Education { get; set; }
-        public Dictionary<string, string> CurrentCityAndHometown { get; set; }
-        public Dictionary<string, string> OtherPlacesLived { get; set; }
-        public Dictionary<string, string> ContactInformation { get; set; }
-        public Dictionary<string, string> BasicInformation { get; set; }
-        public Dictionary<string, string> WebsitesAndSocialLinks { get; set; }
-        public Dictionary<string, string> Relationship { get; set; }
-        public Dictionary<string, string> FamilyMembers { get; set; }
-        public Dictionary<string, string> AboutPerson { get; set; }
-        public Dictionary<string, string> FavoriteQuotes { get; set; }
-        public Dictionary<string, string> LifeEvents { get; set; }
+        private readonly Dictionary<string, List<IProfileField>> _allFields;
 
-        private readonly Dictionary<string, Dictionary<string, string>> _allFields;
+        public List<IProfileField> Work { get; }
+        public List<IProfileField> ProfessionalSkills { get; }
+        public List<IProfileField> Education { get; }
+        public List<IProfileField> CurrentCityAndHometown { get; }
+        public List<IProfileField> OtherPlacesLived { get; }
+        public List<IProfileField> ContactInformation { get; }
+        public List<IProfileField> WebsitesAndSocialLinks { get; }
+        public List<IProfileField> BasicInformation { get; }
+        public List<IProfileField> Relationship { get; }
+        public List<IProfileField> FamilyMembers { get; }
+        public List<IProfileField> AboutPerson { get; }
+        public List<IProfileField> OtherNames { get; }
+        public List<IProfileField> FavoriteQuotes { get; }
+        public List<IProfileField> LifeEvents { get; }
 
 
         public AboutClass() {
-            Work = new Dictionary<string, string>();
-            ProfessionalSkills = new Dictionary<string, string>();
-            Education = new Dictionary<string, string>();
-            CurrentCityAndHometown = new Dictionary<string, string>();
-            OtherPlacesLived = new Dictionary<string, string>();
-            ContactInformation = new Dictionary<string, string>();
-            BasicInformation = new Dictionary<string, string>();
-            WebsitesAndSocialLinks = new Dictionary<string, string>();
-            Relationship = new Dictionary<string, string>();
-            FamilyMembers = new Dictionary<string, string>();
-            AboutPerson = new Dictionary<string, string>();
-            FavoriteQuotes = new Dictionary<string, string>();
-            LifeEvents = new Dictionary<string, string>();
+            Work = new List<IProfileField>();
+            ProfessionalSkills = new List<IProfileField>();
+            Education = new List<IProfileField>();
+            CurrentCityAndHometown = new List<IProfileField>();
+            OtherPlacesLived = new List<IProfileField>();
+            ContactInformation = new List<IProfileField>();
+            WebsitesAndSocialLinks = new List<IProfileField>();
+            BasicInformation = new List<IProfileField>();
+            Relationship = new List<IProfileField>();
+            FamilyMembers = new List<IProfileField>();
+            AboutPerson = new List<IProfileField>();
+            OtherNames = new List<IProfileField>();
+            FavoriteQuotes = new List<IProfileField>();
+            LifeEvents = new List<IProfileField>();
 
-            _allFields = new Dictionary<string, Dictionary<string, string>> {
+            _allFields = new Dictionary<string, List<IProfileField>> {
                 {"Work", Work},
-                {"Professional Skills", ProfessionalSkills},
+                {"ProfessionalSkills", ProfessionalSkills},
                 {"Education", Education},
-                {"Current City And Hometown", CurrentCityAndHometown},
-                {"Other Places Lived", OtherPlacesLived},
-                {"Contact Information", ContactInformation},
-                {"Basic Information", BasicInformation},
-                {"Websites and social links", WebsitesAndSocialLinks},
+                {"CurrentCityAndHometown", CurrentCityAndHometown},
+                {"OtherPlacesLived", OtherPlacesLived},
+                {"ContactInformation", ContactInformation},
+                {"WebsitesAndSocialLinks", WebsitesAndSocialLinks},
+                {"BasicInformation", BasicInformation},
                 {"Relationship", Relationship},
-                {"Family Members", FamilyMembers},
-                {"About Person", AboutPerson},
-                {"Favorite Quotes", FavoriteQuotes},
-                {"Life Events", LifeEvents},
+                {"FamilyMembers", FamilyMembers},
+                {"AboutPerson", AboutPerson},
+                {"OtherNames", OtherNames},
+                {"FavoriteQuotes", FavoriteQuotes},
+                {"LifeEvents", LifeEvents},
             };
+        }
+        
+        public void AddData(string listName, string[] data) {
+            var noSpace = Regex.Replace(listName, @"\s+", "");
+
+            var obj = (IProfileField) 
+                GetInstance($"FB_Data_Analysis.DesktopVersion.Models.AboutModels.{noSpace}Model");
+            obj.AddData(data);
+
+            _allFields[noSpace].Add(obj);
+        }
+
+        private object GetInstance(string strFullyQualifiedName) {
+            var type = Type.GetType(strFullyQualifiedName);
+            //Print($"Initial type {strFullyQualifiedName} is null", ConsoleColor.DarkYellow);
+            if (type != null)
+                return Activator.CreateInstance(type);
+            foreach (var asm in AppDomain.CurrentDomain.GetAssemblies()) {
+                //Print($"current asm {asm.FullName}", ConsoleColor.DarkYellow);
+                type = asm.GetType(strFullyQualifiedName);
+                if (type != null)
+                    return Activator.CreateInstance(type);
+            }
+
+            return null;
         }
 
         public void AddData(string listName, string value) {
-            Print($"adding {value} to {listName}", ConsoleColor.DarkYellow);
+            Helpers.Print($"adding {value} to {listName}", ConsoleColor.DarkYellow);
             GetType().GetProperty(listName).PropertyType.GetMethod("Add")
-                .Invoke(this[listName], new object[] {value});
+                .Invoke(_allFields[listName], new object[] {value});
         }
 
         public void AddData(string dictionaryName, string key, string value) {
-            Print($"adding {key}: {value} to {dictionaryName} len -> {dictionaryName.Length}", ConsoleColor.Yellow);
+            Helpers.Print($"adding {key}: {value} to {dictionaryName} len -> {dictionaryName.Length}", ConsoleColor.Yellow);
             GetType().GetProperty(dictionaryName).PropertyType.GetMethod("Add")
-                .Invoke(this[dictionaryName], new object[] {key, value});
+                .Invoke(_allFields[dictionaryName], new object[] {key, value});
         }
 
         public void PrintAbout() {
             Console.WriteLine();
             foreach (var kvp in _allFields) {
-                Print($"{kvp.Key}: ", ConsoleColor.Red);
+                Helpers.Print($"{kvp.Key}: ", ConsoleColor.Red);
                 Console.WriteLine("");
-                foreach (var kvpl in kvp.Value) {
-                    Print($"{kvpl.Key}: ", ConsoleColor.DarkGreen);
-                    Print($"   {kvpl.Value}", ConsoleColor.Yellow);
+                foreach (var i in kvp.Value) {
+                    i.Log();
                 }
             }
 

@@ -64,7 +64,7 @@ namespace FB_Data_Analysis.DesktopVersion {
 
             GetGroupPage();
 
-            var x = new GroupParser("https://www.facebook.com/groups/3/members/");
+            var x = new GroupParser("https://www.facebook.com/groups/1379225572136343/members/");
             x.GetEm();
 
             /*
@@ -109,7 +109,14 @@ namespace FB_Data_Analysis.DesktopVersion {
             Helpers.Print("Single loop started");
             Helpers.Print("");
 
-            var e = "https://www.facebook.com/zuck";
+            var e = "https://www.facebook.com/elena.taran.731";
+//            var e = "https://www.facebook.com/elena.smeu97";
+//            var e = "https://www.facebook.com/julia.gatman";
+//            var e = "https://www.facebook.com/konstandina.skov"; // some of everything :D
+//            var e = "https://www.facebook.com/CristinaUngurean97";
+//            var e = "https://www.facebook.com/elena.smeu97";
+            //var e = "https://www.facebook.com/nicole.dybowski";
+                //"https://www.facebook.com/cornea.costea";
 
             GetGroupPage();
 

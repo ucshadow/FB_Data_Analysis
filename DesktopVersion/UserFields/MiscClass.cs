@@ -6,10 +6,6 @@ using FB_Data_Analysis.Classes.UserFields;
 
 namespace FB_Data_Analysis.DesktopVersion.UserFields {
     public class MiscClass {
-        public object this[string propertyName] {
-            get => GetType().GetProperty(propertyName).GetValue(this, null);
-            set => GetType().GetProperty(propertyName).SetValue(this, value, null);
-        }
 
         private readonly Dictionary<string, List<IProfileField>> _allFields;
         
@@ -52,7 +48,7 @@ namespace FB_Data_Analysis.DesktopVersion.UserFields {
                 {"Books", Books},
                 {"Reviews", Reviews},
                 {"Events", Events},
-                {"AppsAndGames", Games},
+                {"AppsandGames", Games},
                 {"Fitness", Fitness},
             };
         }
@@ -69,7 +65,7 @@ namespace FB_Data_Analysis.DesktopVersion.UserFields {
         public void AddData(string listName, string[] data) {
             var noSpace = Regex.Replace(listName, @"\s+", "");
             
-            //Print($"Trying to get type for FB_Data_Analysis.DesktopVersion.Models.{noSpace}Model");
+            //Helpers.Print($"Trying to get type for FB_Data_Analysis.DesktopVersion.Models.{noSpace}Model");
 
             var obj = (IProfileField) GetInstance($"FB_Data_Analysis.DesktopVersion.Models.{noSpace}Model");
             //var obj = (IProfileField) Activator.CreateInstance(_allFields[noSpace].GetType());
